@@ -3,8 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const logFoodController = async (req, res) => {
   try {
-    const { mealTime, foodData } = req.body;
-    
+    const {mealTime,foodData} = req.body;
     
     const userId = req.user.id;
 
@@ -36,16 +35,19 @@ const logFoodController = async (req, res) => {
       }
     }
 
-    const loggedFood = await LoggedFood.create({ userId, mealTime, foodData });
+    const loggedFood = new LoggedFood({ userId, mealTime, foodData });
     console.log(loggedFood);
+     await loggedFood.save();
+
     if (!loggedFood) {
       return res.status(400).json(new ApiResponse(400, "Some Error Occurred"));
     } else {
       // const currentDate = new Date.toLocaleString();
       return res
         .status(201)
-        .json(new ApiResponse(200, loggedFood, "Logged Successfully"));
+        .json(new ApiResponse(200, '', "Logged Successfully"));
     }
+    return res.status(201).json('hello')
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
@@ -70,7 +72,7 @@ const getLoggedFood = async (req, res) => {
         .json(new ApiResponse(200, loggedFoodDetails, "Success"));
     }
   } catch (error) {
-    console.log(error,'error');
+    console.log(error, "error");
     return res.status(500).json(new ApiResponse(500, "Internal Server Error"));
   }
 };
