@@ -169,7 +169,7 @@ const getTotalValuesForBreakfast = async (req,res) =>{
     return res.status(500).json(new ApiResponse(500,false,'Internal Server Error',false))
   }
 }
-const getValuesForLunch = async (req,res) =>{PerDay
+const getValuesForLunch = async (req,res) =>{
   const date = new Date().toISOString().split('T')[0]
   try {
     const userId = req.user.id;
