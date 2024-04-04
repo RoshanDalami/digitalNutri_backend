@@ -117,14 +117,14 @@ const getValuesForBreakfast = async (req,res) =>{
 
     const totalFoodComp = {
       mealTime:"Breakfast",
-      totalCalorieValue:totalCalorieValue.toFixed(1),
-      totalCarbs:totalCarbs.toFixed(1),
-      totalProtein: totalProtein.toFixed(1),
-      totalFat: totalFat.toFixed(1),
-      totalFiber: totalFiber.toFixed(1),
-      totalIron : totalIron.toFixed(1),
-      totalCalcium:totalCalcium.toFixed(1),
-      totalVitaminC : totalVitaminC.toFixed(1)
+      totalCalorieValuePerDay:totalCalorieValue.toFixed(1),
+      totalCarbsPerDay:totalCarbs.toFixed(1),
+      totalProteinPerDay: totalProtein.toFixed(1),
+      totalFatPerDay: totalFat.toFixed(1),
+      totalFiberPerDay: totalFiber.toFixed(1),
+      totalIronPerDay : totalIron.toFixed(1),
+      totalCalciumPerDay:totalCalcium.toFixed(1),
+      totalVitaminCPerDay : totalVitaminC.toFixed(1)
     }
     
     
@@ -187,14 +187,14 @@ const getValuesForLunch = async (req,res) =>{
 
     const totalFoodComp = {
       mealTime:"Lunch",
-      totalCalorieValue:totalCalorieValue.toFixed(1),
-      totalCarbs:totalCarbs.toFixed(1),
-      totalProtein: totalProtein.toFixed(1),
-      totalFat: totalFat.toFixed(1),
-      totalFiber: totalFiber.toFixed(1),
-      totalIron : totalIron.toFixed(1),
-      totalCalcium:totalCalcium.toFixed(1),
-      totalVitaminC : totalVitaminC.toFixed(1)
+      totalCalorieValuePerDay:totalCalorieValue.toFixed(1),
+      totalCarbsPerDay:totalCarbs.toFixed(1),
+      totalProteinPerDay: totalProtein.toFixed(1),
+      totalFatPerDay: totalFat.toFixed(1),
+      totalFiberPerDay: totalFiber.toFixed(1),
+      totalIronPerDay : totalIron.toFixed(1),
+      totalCalciumPerDay:totalCalcium.toFixed(1),
+      totalVitaminCPerDay : totalVitaminC.toFixed(1)
     }
     
     
@@ -257,16 +257,15 @@ const getValuesForSnacks = async (req,res) =>{
 
     const totalFoodComp = {
       mealTime:"Snacks",
-      totalCalorieValue:totalCalorieValue.toFixed(1),
-      totalCarbs:totalCarbs.toFixed(1),
-      totalProtein: totalProtein.toFixed(1),
-      totalFat: totalFat.toFixed(1),
-      totalFiber: totalFiber.toFixed(1),
-      totalIron : totalIron.toFixed(1),
-      totalCalcium:totalCalcium.toFixed(1),
-      totalVitaminC : totalVitaminC.toFixed(1)
+      totalCalorieValuePerDay:totalCalorieValue.toFixed(1),
+      totalCarbsPerDay:totalCarbs.toFixed(1),
+      totalProteinPerDay: totalProtein.toFixed(1),
+      totalFatPerDay: totalFat.toFixed(1),
+      totalFiberPerDay: totalFiber.toFixed(1),
+      totalIronPerDay: totalIron.toFixed(1),
+      totalCalciumPerDay:totalCalcium.toFixed(1),
+      totalVitaminCPerDay: totalVitaminC.toFixed(1)
     }
-    
     
     return res.status(200).json(new ApiResponse(200,totalFoodComp,true))
 
@@ -327,14 +326,14 @@ const getValuesForDinner = async (req,res) =>{
 
     const totalFoodComp = {
       mealTime:"Dinner",
-      totalCalorieValue:totalCalorieValue.toFixed(1),
-      totalCarbs:totalCarbs.toFixed(1),
-      totalProtein: totalProtein.toFixed(1),
-      totalFat: totalFat.toFixed(1),
-      totalFiber: totalFiber.toFixed(1),
-      totalIron : totalIron.toFixed(1),
-      totalCalcium:totalCalcium.toFixed(1),
-      totalVitaminC : totalVitaminC.toFixed(1)
+      totalCalorieValuePerDay:totalCalorieValue.toFixed(1),
+      totalCarbsPerDay:totalCarbs.toFixed(1),
+      totalProteinPerDay: totalProtein.toFixed(1),
+      totalFatPerDay: totalFat.toFixed(1),
+      totalFiberPerDay: totalFiber.toFixed(1),
+      totalIronPerDay: totalIron.toFixed(1),
+      totalCalciumPerDay:totalCalcium.toFixed(1),
+      totalVitaminCPerDay: totalVitaminC.toFixed(1)
     }
     
     
