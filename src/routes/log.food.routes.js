@@ -11,6 +11,10 @@ import {
   getTotalValuesForLunch,
   getTotalValuesForSnacks,
   getTotalValuesForDinner,
+  getValuesForBreakfastWithFoodDetails,
+  getValuesForLunchWithFoodDetails,
+  getValuesForSnacksWithFoodDetails,
+  getValuesForDinnerWithFoodDetails,
 } from "../controllers/logFood.controller.js";
 import { validateToken } from "../middlewares/verifyToken.js";
 
@@ -29,5 +33,9 @@ router.route("/getSnacks").get(validateToken, getValuesForSnacks);
 router.route("/getTotalSnacks").get(validateToken, getTotalValuesForSnacks);
 router.route("/getDinner").get(validateToken, getValuesForDinner);
 router.route("/getTotalDinner").get(validateToken, getTotalValuesForDinner);
+router.route("/getBreakfastWithFood").get(validateToken, getValuesForBreakfastWithFoodDetails);
+router.route("/getLunchWithFood").get(validateToken, getValuesForLunchWithFoodDetails);
+router.route("/getSnacksWithFood").get(validateToken, getValuesForSnacksWithFoodDetails);
+router.route("/getDinnerWithFood").get(validateToken, getValuesForDinnerWithFoodDetails);
 
 export default router;
