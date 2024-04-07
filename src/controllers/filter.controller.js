@@ -630,19 +630,14 @@ async function customDateDaysData(req, res) {
   const userId = req.user.id;
   const date1 = req.query.date1;
   const date2 = req.query.date2;
-
-  // console.log(new Date(date1.split('T')[0]))
-  //   const date = new Date();
-  //   const sevenDataBack = new Date(new Date().setDate(new Date().getDate() - 30));
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter((item) => {
-        
       return (
-        new Date(item.createdAt.toISOString().split("T")[0]) >= new Date(date1) &&
-        new Date(item.createdAt.toISOString().split("T")[0]) <= new Date(date2) 
+        new Date(item.createdAt.toISOString().split("T")[0]) >=
+          new Date(date1) &&
+        new Date(item.createdAt.toISOString().split("T")[0]) <= new Date(date2)
       );
-     
     });
     // console.log(filterData)
     const breakfastData = filterData?.filter(
@@ -844,5 +839,66 @@ async function customDateDaysData(req, res) {
       .json(new ApiResponse(500, null, "Internal Server Error"));
   }
 }
+async function filterWithMealTimeAndDate(req, res) {
+  const { mealTime, date } = req.query;
+  console.log(new Date(date));
+  const userId = req.user.id;
+  try {
+    const response = await LoggedFood.find({ userId: userId });
+    const filteredData = response.filter((item) => {
+      // console.log(new Date(date),  item.createdAt.toISOString().split("T")[0] === date)
+      return (
+        item.mealTime === mealTime &&
+        item.createdAt.toISOString().split("T")[0] === date
+      );
+    });
+    console.log(filteredData);
+    const foodData = filteredData?.filter((item) => {
+      return item.foodData;
+    });
+    
+    const calorieValue = filteredData
+      ?.map((item) => item.foodData?.calorieValue)
+      .reduce((acc, amount) => acc + amount, 0);
+    const quantity = filteredData
+      ?.map((item) => item.foodData?.quantity)
+      .reduce((acc, amount) => acc + amount, 0);
+    const carbs = filteredData
+      ?.map((item) => item.foodData?.carbs)
+      .reduce((acc, amount) => acc + amount, 0);
+    const protein = filteredData
+      ?.map((item) => item.foodData?.protein)
+      .reduce((acc, amount) => acc + amount, 0);
 
-export { sevenDaysData, fourteenDaysData, thirtyDaysData, customDateDaysData };
+    const responseData = {
+      foodData,
+      calorieValue,
+      quantity,
+      carbs,
+      protein,
+    };
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          responseData,
+          "List genereated with given date and meal time"
+        )
+      );
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal server error"));
+  }
+}
+
+export {
+  sevenDaysData,
+  fourteenDaysData,
+  thirtyDaysData,
+  customDateDaysData,
+  filterWithMealTimeAndDate,
+};
