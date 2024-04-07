@@ -841,18 +841,17 @@ async function customDateDaysData(req, res) {
 }
 async function filterWithMealTimeAndDate(req, res) {
   const { mealTime, date } = req.query;
-  console.log(new Date(date));
+
   const userId = req.user.id;
   try {
     const response = await LoggedFood.find({ userId: userId });
     const filteredData = response.filter((item) => {
-      // console.log(new Date(date),  item.createdAt.toISOString().split("T")[0] === date)
       return (
         item.mealTime === mealTime &&
         item.createdAt.toISOString().split("T")[0] === date
       );
     });
-    console.log(filteredData);
+
     const foodData = filteredData?.filter((item) => {
       return item.foodData;
     });
@@ -869,6 +868,21 @@ async function filterWithMealTimeAndDate(req, res) {
     const protein = filteredData
       ?.map((item) => item.foodData?.protein)
       .reduce((acc, amount) => acc + amount, 0);
+    const fats = filteredData
+      ?.map((item) => item.foodData?.fat)
+      .reduce((acc, amount) => acc + amount, 0);
+    const fibre = filteredData
+      ?.map((item) => item.foodData?.fibre)
+      .reduce((acc, amount) => acc + amount, 0);
+    const iron = filteredData
+      ?.map((item) => item.foodData?.iron)
+      .reduce((acc, amount) => acc + amount, 0);
+    const calcium = filteredData
+      ?.map((item) => item.foodData?.calcium)
+      .reduce((acc, amount) => acc + amount, 0);
+    const vitaminC = filteredData
+      ?.map((item) => item.foodData?.vitaminC)
+      .reduce((acc, amount) => acc + amount, 0);
 
     const responseData = {
       foodData,
@@ -876,6 +890,11 @@ async function filterWithMealTimeAndDate(req, res) {
       quantity,
       carbs,
       protein,
+      fats,
+      fibre,
+      iron,
+      calcium,
+      vitaminC
     };
 
     return res
