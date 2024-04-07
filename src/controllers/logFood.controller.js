@@ -4,36 +4,37 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const logFoodController = async (req, res) => {
   try {
     const { mealTime, foodData } = req.body;
+    console.log(mealTime,foodData)
 
     const userId = req.user.id;
 
     // Check if mealTime is provided and is one of the allowed values
-    if (
-      !mealTime ||
-      !["Breakfast", "Snacks", "Lunch", "Dinner"].includes(mealTime)
-    ) {
-      return res.status(400).json({ error: "Invalid or missing meal time" });
-    }
+    // if (
+    //   !mealTime ||
+    //   !["Breakfast", "Snacks", "Lunch", "Dinner"].includes(mealTime)
+    // ) {
+    //   return res.status(400).json({ error: "Invalid or missing meal time" });
+    // }
 
-    const requiredFields = [
-      "name",
-      "calorieValue",
-      "quantity",
-      "carbs",
-      "protein",
-      "fat",
-      "fibre",
-      "iron",
-      "calcium",
-      "vitaminC",
-    ];
-    for (const field of requiredFields) {
-      if (!(field in foodData) || !foodData[field]) {
-        return res
-          .status(400)
-          .json({ error: `Missing or invalid value for field: ${field}` });
-      }
-    }
+    // const requiredFields = [
+    //   "name",
+    //   "calorieValue",
+    //   "quantity",
+    //   "carbs",
+    //   "protein",
+    //   "fat",
+    //   "fibre",
+    //   "iron",
+    //   "calcium",
+    //   "vitaminC",
+    // ];
+    // for (const field of requiredFields) {
+    //   if (!(field in foodData) || !foodData[field]) {
+    //     return res
+    //       .status(400)
+    //       .json({ error: `Missing or invalid value for field: ${field}` });
+    //   }
+    // }
 
     const loggedFood = new LoggedFood({ userId, mealTime, foodData });
     console.log(loggedFood);
