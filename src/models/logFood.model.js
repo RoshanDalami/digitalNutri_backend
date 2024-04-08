@@ -9,58 +9,58 @@ const loggedFoodSchema = new Schema(
     },
     mealTime: {
       type: String,
-      // required: true,
+      required: true,
       enum: ['Breakfast', 'Snacks', 'Lunch', 'Dinner']
     },
     foodData:
     {
       name: {
         type: String,
-        // required: true,
+        required: true,
       },
       calorieValue: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       quantity: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       carbs: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       protein: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       fat: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       fibre: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       iron: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       calcium: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
       vitaminC: {
         type: Number,
-        // required: true,
+        required: true,
         default: 0,
       },
     },
