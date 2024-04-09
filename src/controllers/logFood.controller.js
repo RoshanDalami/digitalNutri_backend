@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const logFoodController = async (req, res) => {
   try {
-    const { mealTime, foodData, _id } = req.body;
+    const { mealTime, foodData, _id,date } = req.body;
     console.log(mealTime, foodData);
 
     const userId = req.user.id;
@@ -38,14 +38,14 @@ const logFoodController = async (req, res) => {
     if (_id) {
       const response = await LoggedFood.findByIdAndUpdate(
         _id,
-        { userId, foodData, mealTime },
+        { userId, foodData, mealTime ,date },
         { new: true }
       );
       return res
         .status(200)
         .json(new ApiResponse(200, response, "Item has been updated"));
     }
-    const loggedFood = new LoggedFood({ userId, mealTime, foodData });
+    const loggedFood = new LoggedFood({ userId, mealTime, foodData ,date });
     console.log(loggedFood);
     await loggedFood.save();
 

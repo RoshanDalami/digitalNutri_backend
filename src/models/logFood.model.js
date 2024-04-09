@@ -64,6 +64,10 @@ const loggedFoodSchema = new Schema(
         default: 0,
       },
     },
+    date:{
+      type:String,
+      required:true,
+    }
   },
   {
     timestamps: true,

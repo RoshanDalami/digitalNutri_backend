@@ -9,7 +9,7 @@ async function sevenDaysData(req, res) {
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter(
-      (item) => item.createdAt === date || item.createdAt >= sevenDataBack
+      (item) => item.date === date.toISOString().split('T')[0] || item.createdAt >= sevenDataBack.toISOString().split('T')[0]
     );
     const breakfastData = filterData?.filter(
       (item) => item.mealTime === "Breakfast"
@@ -217,7 +217,7 @@ async function fourteenDaysData(req, res) {
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter(
-      (item) => item.createdAt === date || item.createdAt >= sevenDataBack
+      (item) => item.date === date.toISOString().split('T')[0] || item.date >= sevenDataBack.toISOString().split('T')[0]
     );
     const breakfastData = filterData?.filter(
       (item) => item.mealTime === "Breakfast"
@@ -421,11 +421,11 @@ async function fourteenDaysData(req, res) {
 async function thirtyDaysData(req, res) {
   const userId = req.user.id;
   const date = new Date();
-  const sevenDataBack = new Date(new Date().setDate(new Date().getDate() - 30));
+  const thirtyDaysBack = new Date(new Date().setDate(new Date().getDate() - 30));
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter(
-      (item) => item.createdAt === date || item.createdAt >= sevenDataBack
+      (item) => item.date === date.toISOString().split('T')[0] || item.createdAt >= thirtyDaysBack.toISOString().split('T')[0]
     );
     const breakfastData = filterData?.filter(
       (item) => item.mealTime === "Breakfast"
@@ -634,9 +634,9 @@ async function customDateDaysData(req, res) {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter((item) => {
       return (
-        new Date(item.createdAt.toISOString().split("T")[0]) >=
-          new Date(date1) &&
-        new Date(item.createdAt.toISOString().split("T")[0]) <= new Date(date2)
+        item.date >=
+          date1 &&
+        item.date <= date2
       );
     });
     // console.log(filterData)
@@ -848,7 +848,7 @@ async function filterWithMealTimeAndDate(req, res) {
     const filteredData = response.filter((item) => {
       return (
         item.mealTime === mealTime &&
-        item.createdAt.toISOString().split("T")[0] === date
+        item.date === date
       );
     });
 
