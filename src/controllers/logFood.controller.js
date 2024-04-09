@@ -3,8 +3,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const logFoodController = async (req, res) => {
   try {
-    const { mealTime, foodData } = req.body;
-    console.log(mealTime,foodData)
+    const { mealTime, foodData, _id } = req.body;
+    console.log(mealTime, foodData);
 
     const userId = req.user.id;
 
@@ -35,7 +35,16 @@ const logFoodController = async (req, res) => {
           .json({ error: `Missing or invalid value for field: ${field}` });
       }
     }
-
+    if (_id) {
+      const response = await LoggedFood.findByIdAndUpdate(
+        _id,
+        { userId, foodData, mealTime },
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json(new ApiResponse(200, response, "Item has been updated"));
+    }
     const loggedFood = new LoggedFood({ userId, mealTime, foodData });
     console.log(loggedFood);
     await loggedFood.save();
@@ -208,7 +217,7 @@ const getValuesForBreakfastWithFoodDetails = async (req, res) => {
       totalIronPerDay: totalIron.toFixed(1),
       totalCalciumPerDay: totalCalcium.toFixed(1),
       totalVitaminCPerDay: totalVitaminC.toFixed(1),
-      foodDetails: loggedFoodForDay.map((item)=> item.foodData),
+      foodDetails: loggedFoodForDay.map((item) => item.foodData),
     };
 
     return res.status(200).json(new ApiResponse(200, totalFoodComp, true));
@@ -377,7 +386,7 @@ const getValuesForLunchWithFoodDetails = async (req, res) => {
       totalIronPerDay: totalIron.toFixed(1),
       totalCalciumPerDay: totalCalcium.toFixed(1),
       totalVitaminCPerDay: totalVitaminC.toFixed(1),
-      foodDetails:loggedFoodForDay?.map((item)=>item?.foodData)
+      foodDetails: loggedFoodForDay?.map((item) => item?.foodData),
     };
 
     return res.status(200).json(new ApiResponse(200, totalFoodComp, true));
@@ -546,7 +555,7 @@ const getValuesForSnacksWithFoodDetails = async (req, res) => {
       totalIronPerDay: totalIron.toFixed(1),
       totalCalciumPerDay: totalCalcium.toFixed(1),
       totalVitaminCPerDay: totalVitaminC.toFixed(1),
-      foodDetails: loggedFoodForDay?.map((item)=>item?.foodData)
+      foodDetails: loggedFoodForDay?.map((item) => item?.foodData),
     };
 
     return res.status(200).json(new ApiResponse(200, totalFoodComp, true));
@@ -658,7 +667,6 @@ const getValuesForDinner = async (req, res) => {
       totalIronPerDay: totalIron.toFixed(1),
       totalCalciumPerDay: totalCalcium.toFixed(1),
       totalVitaminCPerDay: totalVitaminC.toFixed(1),
-      
     };
 
     return res.status(200).json(new ApiResponse(200, totalFoodComp, true));
@@ -716,7 +724,7 @@ const getValuesForDinnerWithFoodDetails = async (req, res) => {
       totalIronPerDay: totalIron.toFixed(1),
       totalCalciumPerDay: totalCalcium.toFixed(1),
       totalVitaminCPerDay: totalVitaminC.toFixed(1),
-      foodDetails: loggedFoodForDay?.map((item)=>item?.foodData)
+      foodDetails: loggedFoodForDay?.map((item) => item?.foodData),
     };
 
     return res.status(200).json(new ApiResponse(200, totalFoodComp, true));
@@ -797,5 +805,4 @@ export {
   getValuesForLunchWithFoodDetails,
   getValuesForSnacksWithFoodDetails,
   getValuesForDinnerWithFoodDetails,
-
 };
