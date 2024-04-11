@@ -16,25 +16,25 @@ const logFoodController = async (req, res) => {
       return res.status(400).json({ error: "Invalid or missing meal time" });
     }
 
-    const requiredFields = [
-      "name",
-      "calorieValue",
-      "quantity",
-      "carbs",
-      "protein",
-      "fat",
-      "fibre",
-      "iron",
-      "calcium",
-      "vitaminC",
-    ];
-    for (const field of requiredFields) {
-      if (!(field in foodData) || !foodData[field]) {
-        return res
-          .status(400)
-          .json({ error: `Missing or invalid value for field: ${field}` });
-      }
-    }
+    // const requiredFields = [
+    //   "name",
+    //   "calorieValue",
+    //   "quantity",
+    //   "carbs",
+    //   "protein",
+    //   "fat",
+    //   "fibre",
+    //   "iron",
+    //   "calcium",
+    //   "vitaminC",
+    // ];
+    // for (const field of requiredFields) {
+    //   if (!(field in foodData) || !foodData[field]) {
+    //     return res
+    //       .status(400)
+    //       .json({ error: `Missing or invalid value for field: ${field}` });
+    //   }
+    // }
     if (_id) {
       const response = await LoggedFood.findByIdAndUpdate(
         _id,
@@ -788,6 +788,17 @@ const getTotalValuesForDinner = async (req, res) => {
       .json(new ApiResponse(500, false, "Internal Server Error", false));
   }
 };
+const deleteLoggedFood = async(req,res)=>{
+  const {id} = req.params;
+  try {
+    const response = await LoggedFood.deleteOne({_id:id})
+    console.log(response);
+    return res.status(200).json(new ApiResponse(200,response,"Item has been deleted"))
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+  }
+}
 
 export {
   logFoodController,
@@ -805,4 +816,5 @@ export {
   getValuesForLunchWithFoodDetails,
   getValuesForSnacksWithFoodDetails,
   getValuesForDinnerWithFoodDetails,
+  deleteLoggedFood
 };
