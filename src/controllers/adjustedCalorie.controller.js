@@ -38,5 +38,7 @@ const getUpdatedCalorie = async (req, res) => {
         res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
     }
 }
-
+async function updateAge(req,res){
+    
+}
 export { updatedCalorieUpload, getUpdatedCalorie };

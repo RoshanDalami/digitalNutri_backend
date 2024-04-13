@@ -150,6 +150,16 @@ const forgotPassword = async (req, res) => {
     return res.status(500).json(new ApiResponse(500, e));
   }
 };
+const updateUserName = async(req,res)=>{
+  try {
+    const {username} =  req.body;
+    const id = req.user.id
+    const response = await User.findByIdAndUpdate({_id:id},{$set:{username:username}},{new:true});
+    return res.status(200).json(new ApiResponse(200,response,'Username updated successfully'))
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+  }
+}
 
-
-export { registerUser, loginUser, currentUser, singOut, forgotPassword };
+export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName };
