@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const logFoodController = async (req, res) => {
   try {
-    const { mealTime, foodData, _id,date } = req.body;
+    const { mealTime, foodData, _id, date } = req.body;
     console.log(mealTime, foodData);
 
     const userId = req.user.id;
@@ -38,14 +38,14 @@ const logFoodController = async (req, res) => {
     if (_id) {
       const response = await LoggedFood.findByIdAndUpdate(
         _id,
-        { userId, foodData, mealTime ,date },
+        { userId, foodData, mealTime, date },
         { new: true }
       );
       return res
         .status(200)
         .json(new ApiResponse(200, response, "Item has been updated"));
     }
-    const loggedFood = new LoggedFood({ userId, mealTime, foodData ,date });
+    const loggedFood = new LoggedFood({ userId, mealTime, foodData, date });
     console.log(loggedFood);
     await loggedFood.save();
 
@@ -788,17 +788,75 @@ const getTotalValuesForDinner = async (req, res) => {
       .json(new ApiResponse(500, false, "Internal Server Error", false));
   }
 };
-const deleteLoggedFood = async(req,res)=>{
-  const {id} = req.params;
+const deleteLoggedFood = async (req, res) => {
+  const { id } = req.params;
   try {
-    const response = await LoggedFood.deleteOne({_id:id})
+    const response = await LoggedFood.deleteOne({ _id: id });
     console.log(response);
-    return res.status(200).json(new ApiResponse(200,response,"Item has been deleted"))
+    return res
+      .status(200)
+      .json(new ApiResponse(200, response, "Item has been deleted"));
   } catch (error) {
     console.log(error);
-    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
   }
-}
+};
+
+const totalCaloriesForDay = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const date = req.query.date;
+    const loggedFoodForDay = await LoggedFood.find({
+      $and: [{ userId: userId, date: date }],
+    });
+    const totalCalorieValue = loggedFoodForDay
+      ?.map((item) => item?.foodData?.calorieValue)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalCarbs = loggedFoodForDay
+      ?.map((item) => item?.foodData?.carbs)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalProtein = loggedFoodForDay
+      ?.map((item) => item?.foodData?.protein)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalFat = loggedFoodForDay
+      ?.map((item) => item?.foodData?.fat)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalFiber = loggedFoodForDay
+      ?.map((item) => item?.foodData?.fibre)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalIron = loggedFoodForDay
+      ?.map((item) => item?.foodData?.iron)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalCalcium = loggedFoodForDay
+      ?.map((item) => item?.foodData?.calcium)
+      .reduce((acc, amount) => acc + amount, 0);
+    const totalVitaminC = loggedFoodForDay
+      ?.map((item) => item?.foodData?.vitaminC)
+      .reduce((acc, amount) => acc + amount, 0);
+
+    const totalFoodComp = {
+      totalCalorieValuePerDay: totalCalorieValue.toFixed(1),
+      totalCarbsPerDay: totalCarbs.toFixed(1),
+      totalProteinPerDay: totalProtein.toFixed(1),
+      totalFatPerDay: totalFat.toFixed(1),
+      totalFiberPerDay: totalFiber.toFixed(1),
+      totalIronPerDay: totalIron.toFixed(1),
+      totalCalciumPerDay: totalCalcium.toFixed(1),
+      totalVitaminCPerDay: totalVitaminC.toFixed(1),
+    };
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, totalFoodComp, "Data generated successfully"));
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
 
 export {
   logFoodController,
@@ -816,5 +874,6 @@ export {
   getValuesForLunchWithFoodDetails,
   getValuesForSnacksWithFoodDetails,
   getValuesForDinnerWithFoodDetails,
-  deleteLoggedFood
+  deleteLoggedFood,
+  totalCaloriesForDay,
 };

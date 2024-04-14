@@ -15,7 +15,8 @@ import {
   getValuesForLunchWithFoodDetails,
   getValuesForSnacksWithFoodDetails,
   getValuesForDinnerWithFoodDetails,
-  deleteLoggedFood
+  deleteLoggedFood,
+  totalCaloriesForDay
 } from "../controllers/logFood.controller.js";
 import { validateToken } from "../middlewares/verifyToken.js";
 
@@ -39,5 +40,6 @@ router.route("/getLunchWithFood").get(validateToken, getValuesForLunchWithFoodDe
 router.route("/getSnacksWithFood").get(validateToken, getValuesForSnacksWithFoodDetails);
 router.route("/getDinnerWithFood").get(validateToken, getValuesForDinnerWithFoodDetails);
 router.route("/deleteLoggedFood/:id").delete(validateToken, deleteLoggedFood);
+router.route("/getCalorieForDay").get(validateToken, totalCaloriesForDay);
 
 export default router;
