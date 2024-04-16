@@ -169,14 +169,18 @@ const changeCalorie = async (req, res) => {
 };
 const updateAge = async (req, res) => {
   try {
-    const { age, _id } = req.body;
+    const { age } = req.body;
+    const userId = req.user.id
     const response = await Calorie.findOneAndUpdate(
-      { _id: _id },
+     {$and: [{userId:userId}]},
       {
         $set: { age: age },
       },
       { new: true }
     );
+    if(!response){
+      return res.status(400).json(new ApiResponse(400,null,'No Data available'))
+    }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
     console.log(error);
@@ -187,9 +191,10 @@ const updateAge = async (req, res) => {
 };
 const updateHeight = async (req, res) => {
   try {
-    const { height, _id } = req.body;
+    const { height } = req.body;
+    const userId = req.user.id;
     const response = await Calorie.findOneAndUpdate(
-      { _id: _id },
+      { userId:userId },
       {
         $set: { height: height },
       },
@@ -205,9 +210,10 @@ const updateHeight = async (req, res) => {
 };
 const updateWeight = async (req, res) => {
   try {
-    const { weight, _id } = req.body;
+    const { weight } = req.body;
+    const userId = req.user.id
     const response = await Calorie.findOneAndUpdate(
-      { _id: _id },
+      { userId: userId },
       {
         $set: { weight: weight },
       },
@@ -223,9 +229,10 @@ const updateWeight = async (req, res) => {
 };
 const updateTargetWeight = async (req, res) => {
   try {
-    const { targetWeight, _id } = req.body;
+    const { targetWeight } = req.body;
+    const userId = req.user.id
     const response = await Calorie.findOneAndUpdate(
-      { _id: _id },
+      { userId: userId },
       {
         $set: { targetWeight: targetWeight },
       },
@@ -242,9 +249,10 @@ const updateTargetWeight = async (req, res) => {
 
 const updateActivity = async(req,res)=>{
   try {
-    const { activity, _id } = req.body;
+    const { activity } = req.body;
+    const userId = req.user.id
     const response = await Calorie.findOneAndUpdate(
-      { _id: _id },
+      { userId:userId },
       {
         $set: { activity: activity },
       },
