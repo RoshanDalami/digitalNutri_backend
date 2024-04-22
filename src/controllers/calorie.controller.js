@@ -1,6 +1,7 @@
 import { UserActivity } from "../constant.js";
 import { Calorie } from "../models/calorie.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { AdjustedCalorie } from "../models/adjustedCalorie.model.js";
 
 const calculateCalorie = async (req, res) => {
   try {
@@ -170,16 +171,73 @@ const changeCalorie = async (req, res) => {
 const updateAge = async (req, res) => {
   try {
     const { age } = req.body;
-    const userId = req.user.id
+    const userId = req.user.id;
+    const prevStatus = await Calorie.findOne({ userId: userId });
+    let weightUnit = "kg";
+    let heightUnit = "cm";
+    // Conversion functions
+    const convertWeight = (weight) =>
+      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+    const convertHeight = (height) =>
+      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
+const isFemale = prevStatus?.gender === 'female'
+    const bmrValue = isFemale
+      ? 10 * convertWeight(prevStatus?.weight) +
+        6.25 * convertHeight(prevStatus?.height) -
+        5 * age -
+        161
+      : 10 * convertWeight(prevStatus?.weight) +
+        6.25 * convertHeight(prevStatus?.height) -
+        5 * age +
+        5;
+
+    // Calculate Calorie Requirement
+
+    let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
     const response = await Calorie.findOneAndUpdate(
-     {$and: [{userId:userId}]},
+      { $and: [{ userId: userId }] },
       {
-        $set: { age: age },
+        $set: { age: age,calorieRequirement:calorieRequirement },
       },
       { new: true }
     );
-    if(!response){
-      return res.status(400).json(new ApiResponse(400,null,'No Data available'))
+    if (!response) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "No Data available"));
+    }
+    if (response) {
+      const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
+      const newCal =  await Calorie.findOne({ userId: userId });
+      if (prevStatus?.targetWeight < prevStatus?.weight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(newCal?.calorieRequirement) - 1100
+                  : parseInt(newCal?.calorieRequirement) - 550,
+            },
+          }
+        );
+      } else if (prevStatus?.targetWeight > prevStatus?.weight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Gain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(newCal?.calorieRequirement) + 1100
+                  : parseInt(newCal?.calorieRequirement) + 550,
+            },
+          }
+        );
+      }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
@@ -193,13 +251,68 @@ const updateHeight = async (req, res) => {
   try {
     const { height } = req.body;
     const userId = req.user.id;
+    const prevStatus = await Calorie.findOne({ userId: userId });
+    let weightUnit = "kg";
+    let heightUnit = "cm";
+    // Conversion functions
+    const convertWeight = (weight) =>
+      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+    const convertHeight = (height) =>
+      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
+    const isFemale = prevStatus?.gender === 'female'
+    const bmrValue = isFemale
+      ? 10 * convertWeight(prevStatus?.weight) +
+        6.25 * convertHeight(height) -
+        5 * prevStatus?.age -
+        161
+      : 10 * convertWeight(prevStatus?.weight) +
+        6.25 * convertHeight(height) -
+        5 * prevStatus?.age +
+        5;
+
+    // Calculate Calorie Requirement
+
+    let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
     const response = await Calorie.findOneAndUpdate(
-      { userId:userId },
+      { userId: userId },
       {
-        $set: { height: height },
+        $set: { height: height,calorieRequirement:calorieRequirement },
       },
       { new: true }
     );
+    if (response) {
+      const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
+      const newCal =  await Calorie.findOne({ userId: userId });
+      if (prevStatus?.targetWeight < prevStatus?.weight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(newCal?.calorieRequirement) - 1100
+                  : parseInt(newCal?.calorieRequirement) - 550,
+            },
+          }
+        );
+      } else if (prevStatus?.targetWeight > prevStatus?.weight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Gain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(newCal?.calorieRequirement) + 1100
+                  : parseInt(newCal?.calorieRequirement) + 550,
+            },
+          }
+        );
+      }
+    }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
     console.log(error);
@@ -211,14 +324,71 @@ const updateHeight = async (req, res) => {
 const updateWeight = async (req, res) => {
   try {
     const { weight } = req.body;
-    const userId = req.user.id
+    const userId = req.user.id;
+    const prevStatus = await Calorie.findOne({ userId: userId });
+    let weightUnit = "kg";
+    let heightUnit = "cm";
+    // Conversion functions
+    const convertWeight = (weight) =>
+      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+    const convertHeight = (height) =>
+      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
+    const isFemale = prevStatus?.gender === 'female'
+    const bmrValue = isFemale
+      ? 10 * convertWeight(weight) +
+        6.25 * convertHeight(prevStatus?.height) -
+        5 * prevStatus?.age -
+        161
+      : 10 * convertWeight(weight) +
+        6.25 * convertHeight(prevStatus?.height) -
+        5 * prevStatus?.age +
+        5;
+
+    // Calculate Calorie Requirement
+
+    let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
+
+   
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { weight: weight },
+        $set: { weight: weight,calorieRequirement:calorieRequirement },
       },
       { new: true }
     );
+    if (response) {
+      const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
+      const newCal =  await Calorie.findOne({ userId: userId });
+      if (prevStatus?.targetWeight < weight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(newCal?.calorieRequirement) - 1100
+                  : parseInt(newCal?.calorieRequirement) - 550,
+            },
+          }
+        );
+      } else if (prevStatus?.targetWeight > weight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Gain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(newCal?.calorieRequirement) + 1100
+                  : parseInt(newCal?.calorieRequirement) + 550,
+            },
+          }
+        );
+      }
+    }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
     console.log(error);
@@ -230,7 +400,8 @@ const updateWeight = async (req, res) => {
 const updateTargetWeight = async (req, res) => {
   try {
     const { targetWeight } = req.body;
-    const userId = req.user.id
+    const userId = req.user.id;
+    const prevStatus = await Calorie.findOne({ userId: userId });
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
@@ -238,6 +409,38 @@ const updateTargetWeight = async (req, res) => {
       },
       { new: true }
     );
+    if (response) {
+      const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
+      if (prevStatus?.weight > targetWeight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(prevStatus?.calorieRequirement) - 1100
+                  : parseInt(prevStatus?.calorieRequirement) - 550,
+            },
+          }
+        );
+      } else if (prevStatus?.weight < targetWeight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Gain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(prevStatus?.calorieRequirement) + 1100
+                  : parseInt(prevStatus?.calorieRequirement) + 550,
+            },
+          }
+        );
+      }
+    }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
     console.log(error);
@@ -247,25 +450,259 @@ const updateTargetWeight = async (req, res) => {
   }
 };
 
-const updateActivity = async(req,res)=>{
+const updateActivity = async (req, res) => {
   try {
-    const { activity } = req.body;
-    const userId = req.user.id
-    const response = await Calorie.findOneAndUpdate(
-      { userId:userId },
-      {
-        $set: { activity: activity },
-      },
-      { new: true }
-    );
-    return res.status(200).json(new ApiResponse(200, response, "Age updated"));
+    const { activity, lactationPeriod } = req.body;
+    const userId = req.user.id;
+    const response = await Calorie.findOne({ userId: req.user.id });
+
+    let weightUnit = "kg";
+    let heightUnit = "cm";
+    const isFemale = response?.gender === "female";
+    // Conversion functions
+    const convertWeight = (weight) =>
+      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+    const convertHeight = (height) =>
+      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
+    const bmrValue = isFemale
+      ? 10 * convertWeight(response?.weight) +
+        6.25 * convertHeight(response?.height) -
+        5 * response?.age -
+        161
+      : 10 * convertWeight(response?.weight) +
+        6.25 * convertHeight(response?.height) -
+        5 * response?.age +
+        5;
+
+    // Calculate Calorie Requirement
+
+    let calorieRequirement = calorieCalculate(bmrValue, activity);
+
+    if (response?.pregnancy === true) {
+      calorieRequirement += 350;
+    } else if (response?.isLactate === true) {
+      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+    } else {
+    }
+    let updateCalorie;
+    if (response?.gender.toLowerCase() === "female") {
+      updateCalorie = await Calorie.findOneAndUpdate(
+        { userId: req.user.id },
+        {
+          $set: {
+            activity: activity,
+            calorieRequirement: calorieRequirement,
+          },
+        },
+        { new: true }
+      );
+    } else {
+      updateCalorie = await Calorie.findOneAndUpdate(
+        { userId: req.user.id },
+        {
+          $set: {
+            activity: activity,
+            pregnancy: false,
+            isLactate: false,
+            calorieRequirement: calorieRequirement,
+          },
+        },
+        { new: true }
+      );
+    }
+    if (updateCalorie) {
+      const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
+      if (response?.weight > response?.targetWeight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(calorieRequirement) - 1100
+                  : parseInt(calorieRequirement) - 550,
+            },
+          }
+        );
+      } else if (response?.weight > response?.targetWeight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Gain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(calorieRequirement) + 1100
+                  : parseInt(calorieRequirement) + 550,
+            },
+          }
+        );
+      } else if (adjCal?.isDiabetic === true) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue: (parseInt(calorieRequirement) * 0.45) / 4,
+            },
+          }
+        );
+      } else {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Maintain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue: calorieRequirement,
+            },
+          }
+        );
+      }
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updateCalorie, "Age updated"));
   } catch (error) {
     console.log(error);
     return res
       .status(500)
       .json(new ApiResponse(500, null, "Internal Server Error"));
   }
-}
+};
+const updateGender = async (req, res) => {
+  try {
+    const { gender, pregnancy, isLactate, lactationPeriod } = req.body;
+    // Calculate BMR
+    const isFemale = gender.toLowerCase() === "female";
+    const response = await Calorie.findOne({ userId: req.user.id });
+
+    let weightUnit = "kg";
+    let heightUnit = "cm";
+    // Conversion functions
+    const convertWeight = (weight) =>
+      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+    const convertHeight = (height) =>
+      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
+
+    const bmrValue = isFemale
+      ? 10 * convertWeight(response?.weight) +
+        6.25 * convertHeight(response?.height) -
+        5 * response?.age -
+        161
+      : 10 * convertWeight(response?.weight) +
+        6.25 * convertHeight(response?.height) -
+        5 * response?.age +
+        5;
+
+    // Calculate Calorie Requirement
+
+    let calorieRequirement = calorieCalculate(bmrValue, response?.activity);
+
+    if (pregnancy === true) {
+      calorieRequirement += 350;
+    } else if (isLactate === true) {
+      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+    } else {
+    }
+    let updateCalorie;
+    if (gender.toLowerCase() === "female") {
+      updateCalorie = await Calorie.findOneAndUpdate(
+        { userId: req.user.id },
+        {
+          $set: {
+            gender: gender,
+            pregnancy: pregnancy,
+            isLactate: isLactate,
+            lactationPeriod:lactationPeriod,
+            calorieRequirement: calorieRequirement,
+          },
+        },
+        { new: true }
+      );
+    } else {
+      updateCalorie = await Calorie.findOneAndUpdate(
+        { userId: req.user.id },
+        {
+          $set: {
+            gender: gender,
+            pregnancy: false,
+            isLactate: false,
+            lactationPeriod:0,
+            calorieRequirement: calorieRequirement,
+          },
+        },
+        { new: true }
+      );
+    }
+    if (updateCalorie) {
+      const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
+      if (response?.weight > response?.targetWeight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(calorieRequirement) - 1100
+                  : parseInt(calorieRequirement) - 550,
+            },
+          }
+        );
+      } else if (response?.weight > response?.targetWeight) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Gain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue:
+                adjCal?.weightGoalValue?.split(" ")[0] == "1"
+                  ? parseInt(calorieRequirement) + 1100
+                  : parseInt(calorieRequirement) + 550,
+            },
+          }
+        );
+      } else if (adjCal?.isDiabetic === true) {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Lose",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue: (parseInt(calorieRequirement) * 0.45) / 4,
+            },
+          }
+        );
+      } else {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Maintain",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue: calorieRequirement,
+            },
+          }
+        );
+      }
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updateCalorie, "Updated age"));
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
 
 export {
   calculateCalorie,
@@ -275,5 +712,6 @@ export {
   updateHeight,
   updateWeight,
   updateTargetWeight,
-  updateActivity
+  updateActivity,
+  updateGender,
 };
