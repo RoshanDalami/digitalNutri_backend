@@ -94,8 +94,8 @@ const calorieCalculate = (bmr, activity) => {
     case "Moderate":
       return bmr * UserActivity.Moderate;
 
-    case "Light":
-      return bmr * UserActivity.Light;
+    case "Heavy":
+      return bmr * UserActivity.Heavy;
 
     case "Very":
       return bmr * UserActivity.Very;
@@ -180,7 +180,7 @@ const updateAge = async (req, res) => {
       weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
     const convertHeight = (height) =>
       heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
-const isFemale = prevStatus?.gender === 'female'
+    const isFemale = prevStatus?.gender === "female";
     const bmrValue = isFemale
       ? 10 * convertWeight(prevStatus?.weight) +
         6.25 * convertHeight(prevStatus?.height) -
@@ -197,7 +197,7 @@ const isFemale = prevStatus?.gender === 'female'
     const response = await Calorie.findOneAndUpdate(
       { $and: [{ userId: userId }] },
       {
-        $set: { age: age,calorieRequirement:calorieRequirement },
+        $set: { age: age, calorieRequirement: calorieRequirement },
       },
       { new: true }
     );
@@ -208,7 +208,7 @@ const isFemale = prevStatus?.gender === 'female'
     }
     if (response) {
       const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
-      const newCal =  await Calorie.findOne({ userId: userId });
+      const newCal = await Calorie.findOne({ userId: userId });
       if (prevStatus?.targetWeight < prevStatus?.weight) {
         await AdjustedCalorie.findOneAndUpdate(
           { userId: req.user.id },
@@ -259,7 +259,7 @@ const updateHeight = async (req, res) => {
       weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
     const convertHeight = (height) =>
       heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
-    const isFemale = prevStatus?.gender === 'female'
+    const isFemale = prevStatus?.gender === "female";
     const bmrValue = isFemale
       ? 10 * convertWeight(prevStatus?.weight) +
         6.25 * convertHeight(height) -
@@ -276,13 +276,13 @@ const updateHeight = async (req, res) => {
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { height: height,calorieRequirement:calorieRequirement },
+        $set: { height: height, calorieRequirement: calorieRequirement },
       },
       { new: true }
     );
     if (response) {
       const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
-      const newCal =  await Calorie.findOne({ userId: userId });
+      const newCal = await Calorie.findOne({ userId: userId });
       if (prevStatus?.targetWeight < prevStatus?.weight) {
         await AdjustedCalorie.findOneAndUpdate(
           { userId: req.user.id },
@@ -333,7 +333,7 @@ const updateWeight = async (req, res) => {
       weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
     const convertHeight = (height) =>
       heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
-    const isFemale = prevStatus?.gender === 'female'
+    const isFemale = prevStatus?.gender === "female";
     const bmrValue = isFemale
       ? 10 * convertWeight(weight) +
         6.25 * convertHeight(prevStatus?.height) -
@@ -348,17 +348,16 @@ const updateWeight = async (req, res) => {
 
     let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
 
-   
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { weight: weight,calorieRequirement:calorieRequirement },
+        $set: { weight: weight, calorieRequirement: calorieRequirement },
       },
       { new: true }
     );
     if (response) {
       const adjCal = await AdjustedCalorie.findOne({ userId: req.user.id });
-      const newCal =  await Calorie.findOne({ userId: userId });
+      const newCal = await Calorie.findOne({ userId: userId });
       if (prevStatus?.targetWeight < weight) {
         await AdjustedCalorie.findOneAndUpdate(
           { userId: req.user.id },
@@ -618,7 +617,7 @@ const updateGender = async (req, res) => {
             gender: gender,
             pregnancy: pregnancy,
             isLactate: isLactate,
-            lactationPeriod:lactationPeriod,
+            lactationPeriod: lactationPeriod,
             calorieRequirement: calorieRequirement,
           },
         },
@@ -632,7 +631,7 @@ const updateGender = async (req, res) => {
             gender: gender,
             pregnancy: false,
             isLactate: false,
-            lactationPeriod:0,
+            lactationPeriod: 0,
             calorieRequirement: calorieRequirement,
           },
         },
