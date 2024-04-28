@@ -38,7 +38,24 @@ const getUpdatedCalorie = async (req, res) => {
         res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
     }
 }
-async function updateAge(req,res){
-    
+const updateDiabetic =async (req,res)=>{
+    try {
+        const {isDiabetic} = req.body;
+        if(isDiabetic === true){
+            const response = await AdjustedCalorie.findOne({userId:req.user.id});
+            const carbsIngram = (45/100 * (response.adjustedCalorieValue))/4
+            await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
+                $set:{isDiabetic:isDiabetic}
+            })
+            return res.status(200).json(new ApiResponse(200,carbsIngram,"updated"))
+
+        }
+        const response =  await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
+            $set:{isDiabetic:isDiabetic}
+        },{new:true})
+        return res.status(200).json(new ApiResponse(200,response,'diabetic'))
+    } catch (error) {
+    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+    }
 }
-export { updatedCalorieUpload, getUpdatedCalorie };
+export { updatedCalorieUpload, getUpdatedCalorie,updateDiabetic };
