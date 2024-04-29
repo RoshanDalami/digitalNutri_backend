@@ -21,6 +21,9 @@ const adjustedCalorieSchema = new Schema({
     adjustedCalorieValue: {
         type: Number,
         required: true
+    },
+    carbsInGram:{
+        type:Number
     }
 });
 
