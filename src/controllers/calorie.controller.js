@@ -194,6 +194,14 @@ const updateAge = async (req, res) => {
     // Calculate Calorie Requirement
 
     let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
+    if (prevStatus?.pregnancy === true) {
+      calorieRequirement += 350;
+    } else if (prevStatus?.isLactate === true) {
+      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+    } else {
+    }
+
+    
     const response = await Calorie.findOneAndUpdate(
       { $and: [{ userId: userId }] },
       {
@@ -273,6 +281,13 @@ const updateHeight = async (req, res) => {
     // Calculate Calorie Requirement
 
     let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
+    if (prevStatus?.pregnancy === true) {
+      calorieRequirement += 350;
+    } else if (prevStatus?.isLactate === true) {
+      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+    } else {
+    }
+
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
@@ -347,6 +362,12 @@ const updateWeight = async (req, res) => {
     // Calculate Calorie Requirement
 
     let calorieRequirement = calorieCalculate(bmrValue, prevStatus?.activity);
+    if (prevStatus?.pregnancy === true) {
+      calorieRequirement += 350;
+    } else if (prevStatus?.isLactate === true) {
+      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+    } else {
+    }
 
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
