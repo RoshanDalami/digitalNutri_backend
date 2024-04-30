@@ -20,7 +20,19 @@ const calculateCalorie = async (req, res) => {
       lactationPeriod,
       targetWeight,
     } = req.body;
-
+    console.log(
+      weight,
+      weightUnit,
+      height,
+      heightUnit,
+      age,
+      gender,
+      activity,
+      pregnancy,
+      isLactate,
+      lactationPeriod,
+      targetWeight ,"calculatecalorie"
+    );
     // Checks if null
     if (
       !weight ||
@@ -122,6 +134,7 @@ const getCalorie = async (req, res) => {
 const changeCalorie = async (req, res) => {
   try {
     const values = await Calorie.findOne({ userId: req.user.id });
+    console.log(values,'from changeCalorie')
     console.log(req.body);
     const {
       weight,
@@ -201,7 +214,6 @@ const updateAge = async (req, res) => {
     } else {
     }
 
-    
     const response = await Calorie.findOneAndUpdate(
       { $and: [{ userId: userId }] },
       {
