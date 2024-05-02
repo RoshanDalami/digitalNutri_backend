@@ -1,62 +1,156 @@
-import { AdjustedCalorie } from '../models/adjustedCalorie.model.js';
-import { ApiResponse } from '../utils/ApiResponse.js';
+import { AdjustedCalorie } from "../models/adjustedCalorie.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { Calorie } from "../models/calorie.model.js";
 
 const updatedCalorieUpload = async (req, res) => {
-    try{
-        const { weightGoal, weightGoalValue, isDiabetic, adjustedCalorieValue } = req.body;
+  try {
+    const { weightGoal, weightGoalValue, isDiabetic, adjustedCalorieValue } =
+      req.body;
 
-        if( !weightGoal || !weightGoalValue || !isDiabetic){
-            return res.status(400).json({message: "All Fields are Required"});
-        }
-
-        await AdjustedCalorie.deleteMany({ userId: req.user.id });
-
-        const adjustedValues = await AdjustedCalorie.create({
-            userId: req.user.id,
-            weightGoal,
-            weightGoalValue,
-            isDiabetic,
-            adjustedCalorieValue
-        });
-
-        res.status(201).json(new ApiResponse(200, adjustedValues, "Created"));
+    if (!weightGoal || !weightGoalValue || !isDiabetic) {
+      return res.status(400).json({ message: "All Fields are Required" });
     }
-    catch(e){
-        res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
-    }
-}
+
+    await AdjustedCalorie.deleteMany({ userId: req.user.id });
+
+    const adjustedValues = await AdjustedCalorie.create({
+      userId: req.user.id,
+      weightGoal,
+      weightGoalValue,
+      isDiabetic,
+      adjustedCalorieValue,
+    });
+
+    res.status(201).json(new ApiResponse(200, adjustedValues, "Created"));
+  } catch (e) {
+    res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
 
 const getUpdatedCalorie = async (req, res) => {
-    try{
-        const userId = req.user.id;
-        const adjustedValues = await AdjustedCalorie.find({userId});
+  try {
+    const userId = req.user.id;
+    const adjustedValues = await AdjustedCalorie.find({ userId });
 
-        res.status(201).json(new ApiResponse(200, adjustedValues, "Success"));
+    res.status(201).json(new ApiResponse(200, adjustedValues, "Success"));
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
+const updateDiabetic = async (req, res) => {
+  try {
+    const { isDiabetic } = req.body;
+    console.log(typeof isDiabetic);
+    if (isDiabetic === true) {
+      const response = await AdjustedCalorie.findOne({ userId: req.user.id });
+      const carbsIngram = ((45 / 100) * response.adjustedCalorieValue) / 4;
+      const updated = await AdjustedCalorie.findOneAndUpdate(
+        { userId: req.user.id },
+        {
+          $set: { isDiabetic: isDiabetic, carbsInGram: carbsIngram },
+        },
+        { new: true }
+      );
+      return res.status(200).json(new ApiResponse(200, updated, "updated"));
     }
-    catch(e){
-        console.log(e);
-        res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
-    }
-}
-const updateDiabetic =async (req,res)=>{
-    try {
-        const {isDiabetic} = req.body;
-        console.log(typeof(isDiabetic))
-        if(isDiabetic === true){
-            const response = await AdjustedCalorie.findOne({userId:req.user.id});
-            const carbsIngram = (45/100 * (response.adjustedCalorieValue))/4
-           const updated =  await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-                $set:{isDiabetic:isDiabetic,carbsInGram:carbsIngram}
-            },{new:true})
-            return res.status(200).json(new ApiResponse(200,updated,"updated"))
+    const response = await AdjustedCalorie.findOneAndUpdate(
+      { userId: req.user.id },
+      {
+        $set: { isDiabetic: isDiabetic, carbsInGram: 0 },
+      },
+      { new: true }
+    );
+    return res.status(200).json(new ApiResponse(200, response, "diabetic"));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
 
-        }
-        const response =  await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-            $set:{isDiabetic:isDiabetic,carbsInGram:0}
-        },{new:true})
-        return res.status(200).json(new ApiResponse(200,response,'diabetic'))
-    } catch (error) {
-    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+const updateWeightGoal = async (req, res) => {
+  const userId = req.user.id;
+  const { weightGoal, weightGoalValue } = req.body;
+  try {
+    const calories = await Calorie.findOne({ userId });
+
+    const weight = calories.weight;
+    const targetWeight = calories.targetWeight;
+    
+    if (targetWeight == weight) {
+      const response = await AdjustedCalorie.findOneAndUpdate(
+        { userId },
+        {
+          $set: {
+            weightGoal: "Maintenance",
+            adjustedCalorieValue: parseInt(calories?.calorieRequirement),
+            weightGoalValue: "",
+          },
+        },
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, response, "Weight goal updated successfully")
+        );
+    } else if (targetWeight > weight) {
+      console.log(weightGoalValue?.split(" ")[0] == "1")
+      console.log(typeof(calories.calorieRequirement))
+      const adjustedCalorieValue =
+        (weightGoalValue?.split(" ")[0] == "1")
+          ? parseInt(calories.calorieRequirement) + 1100
+          : parseInt(calories.calorieRequirement) + 550;
+          console.log(adjustedCalorieValue)
+      const response = await AdjustedCalorie.findOneAndUpdate(
+        { userId },
+        {
+          $set: {
+            weightGoal: "Gain",
+            adjustedCalorieValue: adjustedCalorieValue,
+            weightGoalValue: weightGoalValue,
+          },
+        },
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, response, "Weight goal updated successfully")
+        );
+    } else {
+      const adjustedCalorieValue =
+        weightGoalValue.split(" ")[0] == "1"
+          ? parseInt(calories.calorieRequirement) - 1100
+          : parseInt(calories.calorieRequirement)- 550;
+      const response = await AdjustedCalorie.findOneAndUpdate(
+        { userId },
+        {
+          $set: {
+            weightGoal: "Lose",
+            adjustedCalorieValue: adjustedCalorieValue,
+            weightGoalValue: weightGoalValue,
+          },
+        },
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, response, "Weight goal updated successfully")
+        );
     }
-}
-export { updatedCalorieUpload, getUpdatedCalorie,updateDiabetic };
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
+export {
+  updatedCalorieUpload,
+  getUpdatedCalorie,
+  updateDiabetic,
+  updateWeightGoal,
+};

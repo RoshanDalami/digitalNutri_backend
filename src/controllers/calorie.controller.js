@@ -31,7 +31,8 @@ const calculateCalorie = async (req, res) => {
       pregnancy,
       isLactate,
       lactationPeriod,
-      targetWeight ,"calculatecalorie"
+      targetWeight,
+      "calculatecalorie"
     );
     // Checks if null
     if (
@@ -134,7 +135,7 @@ const getCalorie = async (req, res) => {
 const changeCalorie = async (req, res) => {
   try {
     const values = await Calorie.findOne({ userId: req.user.id });
-    console.log(values,'from changeCalorie')
+    console.log(values, "from changeCalorie");
     console.log(req.body);
     const {
       weight,
@@ -210,7 +211,7 @@ const updateAge = async (req, res) => {
     if (prevStatus?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (prevStatus?.isLactate === true) {
-      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
 
@@ -296,7 +297,7 @@ const updateHeight = async (req, res) => {
     if (prevStatus?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (prevStatus?.isLactate === true) {
-      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
 
@@ -377,7 +378,7 @@ const updateWeight = async (req, res) => {
     if (prevStatus?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (prevStatus?.isLactate === true) {
-      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
 
@@ -513,7 +514,7 @@ const updateActivity = async (req, res) => {
     if (response?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (response?.isLactate === true) {
-      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
     let updateCalorie;
@@ -638,7 +639,7 @@ const updateGender = async (req, res) => {
     if (pregnancy === true) {
       calorieRequirement += 350;
     } else if (isLactate === true) {
-      calorieRequirement += lactationPeriod < 6 ? 600 : 520;
+      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
     let updateCalorie;
