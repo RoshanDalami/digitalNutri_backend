@@ -239,8 +239,8 @@ const updateAge = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(newCal?.calorieRequirement) - 1100
-                  : parseInt(newCal?.calorieRequirement) - 550,
+                  ? parseInt(newCal?.calorieRequirement) - 1000
+                  : parseInt(newCal?.calorieRequirement) - 500,
             },
           }
         );
@@ -253,8 +253,8 @@ const updateAge = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(newCal?.calorieRequirement) + 1100
-                  : parseInt(newCal?.calorieRequirement) + 550,
+                  ? parseInt(newCal?.calorieRequirement) + 1000
+                  : parseInt(newCal?.calorieRequirement) + 500,
             },
           }
         );
@@ -320,8 +320,8 @@ const updateHeight = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(newCal?.calorieRequirement) - 1100
-                  : parseInt(newCal?.calorieRequirement) - 550,
+                  ? parseInt(newCal?.calorieRequirement) - 1000
+                  : parseInt(newCal?.calorieRequirement) - 500,
             },
           }
         );
@@ -334,8 +334,8 @@ const updateHeight = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(newCal?.calorieRequirement) + 1100
-                  : parseInt(newCal?.calorieRequirement) + 550,
+                  ? parseInt(newCal?.calorieRequirement) + 1000
+                  : parseInt(newCal?.calorieRequirement) + 500,
             },
           }
         );
@@ -401,8 +401,8 @@ const updateWeight = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(newCal?.calorieRequirement) - 1100
-                  : parseInt(newCal?.calorieRequirement) - 550,
+                  ? parseInt(newCal?.calorieRequirement) - 1000
+                  : parseInt(newCal?.calorieRequirement) - 500,
             },
           }
         );
@@ -415,8 +415,8 @@ const updateWeight = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(newCal?.calorieRequirement) + 1100
-                  : parseInt(newCal?.calorieRequirement) + 550,
+                  ? parseInt(newCal?.calorieRequirement) + 1000
+                  : parseInt(newCal?.calorieRequirement) + 500,
             },
           }
         );
@@ -453,8 +453,8 @@ const updateTargetWeight = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(prevStatus?.calorieRequirement) - 1100
-                  : parseInt(prevStatus?.calorieRequirement) - 550,
+                  ? parseInt(prevStatus?.calorieRequirement) - 1000
+                  : parseInt(prevStatus?.calorieRequirement) - 500,
             },
           }
         );
@@ -467,8 +467,8 @@ const updateTargetWeight = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(prevStatus?.calorieRequirement) + 1100
-                  : parseInt(prevStatus?.calorieRequirement) + 550,
+                  ? parseInt(prevStatus?.calorieRequirement) + 1000
+                  : parseInt(prevStatus?.calorieRequirement) + 500,
             },
           }
         );
@@ -554,8 +554,8 @@ const updateActivity = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(calorieRequirement) - 1100
-                  : parseInt(calorieRequirement) - 550,
+                  ? parseInt(calorieRequirement) - 1000
+                  : parseInt(calorieRequirement) - 500,
             },
           }
         );
@@ -568,8 +568,8 @@ const updateActivity = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(calorieRequirement) + 1100
-                  : parseInt(calorieRequirement) + 550,
+                  ? parseInt(calorieRequirement) + 1000
+                  : parseInt(calorieRequirement) + 500,
             },
           }
         );
@@ -683,8 +683,8 @@ const updateGender = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(calorieRequirement) - 1100
-                  : parseInt(calorieRequirement) - 550,
+                  ? parseInt(calorieRequirement) - 1000
+                  : parseInt(calorieRequirement) - 500,
             },
           }
         );
@@ -697,8 +697,8 @@ const updateGender = async (req, res) => {
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue:
                 adjCal?.weightGoalValue?.split(" ")[0] == "1"
-                  ? parseInt(calorieRequirement) + 1100
-                  : parseInt(calorieRequirement) + 550,
+                  ? parseInt(calorieRequirement) + 1000
+                  : parseInt(calorieRequirement) + 500,
             },
           }
         );
