@@ -123,7 +123,7 @@ const updateWeightGoal = async (req, res) => {
       const adjustedCalorieValue =
         weightGoalValue.split(" ")[0] == "1"
           ? parseInt(calories.calorieRequirement) - 1000
-          : parseInt(calories.calorieRequirement)- 500;
+          : parseInt(calories.calorieRequirement) - 500;
       const response = await AdjustedCalorie.findOneAndUpdate(
         { userId },
         {
