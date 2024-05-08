@@ -352,22 +352,20 @@ const updateHeight = async (req, res) => {
 const updateWeight = async (req, res) => {
   try {
     const { weight , weightUnit} = req.body;
+    console.log(weightUnit,'weight unit')
     const userId = req.user.id;
     const prevStatus = await Calorie.findOne({ userId: userId });
     
     // Conversion functions
-    let heightUnit =''
     const convertWeight = (weight,weightUnit) =>
       weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
-    const convertHeight = (height) =>
-      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
     const isFemale = prevStatus?.gender === "female";
     const bmrValue = isFemale
       ? 10 * convertWeight(weight,weightUnit) +
         6.25 * prevStatus?.height -
         5 * prevStatus?.age -
         161
-      : 10 * convertWeight(weight) +
+      : 10 * convertWeight(weight,weightUnit) +
         6.25 * prevStatus?.height -
         5 * prevStatus?.age +
         5;
