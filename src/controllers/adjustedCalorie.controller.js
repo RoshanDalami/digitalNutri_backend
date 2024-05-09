@@ -44,7 +44,8 @@ const updateDiabetic = async (req, res) => {
     console.log(typeof isDiabetic);
     if (isDiabetic === true) {
       const response = await AdjustedCalorie.findOne({ userId: req.user.id });
-      const carbsIngram = ((45 / 100) * response.adjustedCalorieValue) / 4;
+      const requiredCalore = await Calorie.findOne({userId:req.user.id})
+      const carbsIngram = ((45 / 100) * requiredCalore.calorieRequirement) / 4;
       const updated = await AdjustedCalorie.findOneAndUpdate(
         { userId: req.user.id },
         {
