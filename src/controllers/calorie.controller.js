@@ -304,7 +304,7 @@ const updateHeight = async (req, res) => {
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { height: height, calorieRequirement: calorieRequirement },
+        $set: { height: convertHeight(height,heightUnit), calorieRequirement: calorieRequirement },
       },
       { new: true }
     );
@@ -383,7 +383,7 @@ const updateWeight = async (req, res) => {
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { weight: weight, calorieRequirement: calorieRequirement },
+        $set: { weight: convertWeight(weight,weightUnit), calorieRequirement: calorieRequirement },
       },
       { new: true }
     );
@@ -489,14 +489,14 @@ const updateActivity = async (req, res) => {
     const userId = req.user.id;
     const response = await Calorie.findOne({ userId: req.user.id });
 
-    let weightUnit = "kg";
-    let heightUnit = "feet";
+    // let weightUnit = "kg";
+    // let heightUnit = "feet";
     const isFemale = response?.gender === "female";
-    // Conversion functions
-    const convertWeight = (weight) =>
-      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
-    const convertHeight = (height) =>
-      heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
+    // // Conversion functions
+    // const convertWeight = (weight) =>
+    //   weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+    // const convertHeight = (height) =>
+    //   heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
     const bmrValue = isFemale
       ? 10 * response?.weight +
         6.25 * response?.height -
