@@ -273,11 +273,10 @@ const updateHeight = async (req, res) => {
     const { height , heightUnit } = req.body;
     const userId = req.user.id;
     const prevStatus = await Calorie.findOne({ userId: userId });
-    let weightUnit = "kg";
+
    
     // Conversion functions
-    const convertWeight = (weight) =>
-      weightUnit.toLowerCase() === "lbs" ? weight * 0.4535924 : weight;
+console.log(height,heightUnit,'from server')
     const convertHeight = (height,heightUnit) =>
       heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
     const isFemale = prevStatus?.gender === "female";
