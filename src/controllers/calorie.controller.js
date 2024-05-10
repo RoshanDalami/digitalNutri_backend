@@ -280,7 +280,7 @@ const updateHeight = async (req, res) => {
     const prevStatus = await Calorie.findOne({ userId: userId });
 
     // Conversion functions
-    console.log(height, heightUnit.toLowerCase() === "feet", "from server");
+    console.log(height,heightUnit,heightUnit.toLowerCase(), heightUnit.toLowerCase() === "feet", "from server");
     const convertHeight = (height, heightUnit) =>
       heightUnit.toLowerCase() == "feet" ? height * 30.48 : height;
     const isFemale = prevStatus?.gender == "female";
