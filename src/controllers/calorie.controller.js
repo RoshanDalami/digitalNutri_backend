@@ -201,7 +201,7 @@ const updateAge = async (req, res) => {
     if (prevStatus?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (prevStatus?.isLactate === true) {
-      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
+      calorieRequirement += prevStatus?.lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
 
@@ -296,7 +296,7 @@ const updateHeight = async (req, res) => {
     if (prevStatus?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (prevStatus?.isLactate === true) {
-      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
+      calorieRequirement += prevStatus?.lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
 
@@ -538,7 +538,7 @@ const updateActivity = async (req, res) => {
     if (response?.pregnancy === true) {
       calorieRequirement += 350;
     } else if (response?.isLactate === true) {
-      calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
+      calorieRequirement += prevStatus?.lactationPeriod <= 6 ? 600 : 520;
     } else {
     }
     let updateCalorie;
