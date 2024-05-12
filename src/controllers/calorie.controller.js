@@ -253,7 +253,7 @@ const updateAge = async (req, res) => {
           { userId: req.user.id },
           {
             $set: {
-              weightGoal: "Gain",
+              weightGoal: "Maintenance",
               weightGoalValue: adjCal?.weightGoalValue,
               adjustedCalorieValue: parseInt(newCal?.calorieRequirement),
             },
@@ -276,7 +276,13 @@ const updateHeight = async (req, res) => {
     const prevStatus = await Calorie.findOne({ userId: userId });
 
     // Conversion functions
-    console.log(height,heightUnit,heightUnit.toLowerCase(), heightUnit.toLowerCase() === "feet", "from server");
+    console.log(
+      height,
+      heightUnit,
+      heightUnit.toLowerCase(),
+      heightUnit.toLowerCase() === "feet",
+      "from server"
+    );
     const convertHeight = (height, heightUnit) =>
       heightUnit.toLowerCase() == "feet" ? height * 30.48 : height;
     const isFemale = prevStatus?.gender == "female";
@@ -499,6 +505,17 @@ const updateTargetWeight = async (req, res) => {
             },
           }
         );
+      } else {
+        await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              weightGoal: "Maintenance",
+              weightGoalValue: adjCal?.weightGoalValue,
+              adjustedCalorieValue: parseInt(prevStatus?.calorieRequirement),
+            },
+          }
+        );
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -615,7 +632,7 @@ const updateActivity = async (req, res) => {
             $set: {
               weightGoal: "Maintain",
               weightGoalValue: adjCal?.weightGoalValue,
-              adjustedCalorieValue: calorieRequirement,
+              adjustedCalorieValue: parseInt(calorieRequirement),
             },
           }
         );
@@ -733,7 +750,7 @@ const updateGender = async (req, res) => {
             $set: {
               weightGoal: "Maintain",
               weightGoalValue: adjCal?.weightGoalValue,
-              adjustedCalorieValue: calorieRequirement,
+              adjustedCalorieValue: parseInt(calorieRequirement),
             },
           }
         );
