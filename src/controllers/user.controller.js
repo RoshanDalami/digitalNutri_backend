@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-
+import { sendMail } from "../utils/mailer.js";
 
 const registerUser = async (req, res) => {
     try{
@@ -46,6 +46,7 @@ const registerUser = async (req, res) => {
             message: "Somthing went wrong while registering user"
         })
     };
+    await sendMail(createdUser.email,createdUser._id)
     const accessToken = await jwt.sign({
       user: {
           id: user._id,
@@ -57,6 +58,8 @@ const registerUser = async (req, res) => {
   process.env.ACCESS_TOKEN,
   {expiresIn: '1h',},
   );
+
+  await sendMail(email,)
 
     //Returning the registered user
     return res.status(200).json(new ApiResponse(200, {token: accessToken, user: createdUser}, "Signup Successfull"));
@@ -120,12 +123,34 @@ const currentUser = async (req, res) => {
     res.json({message: "Get all users"})
 }
 
+const verify = async (req,res)=>{
+  try {
+    const {token} = req.query;
+    if(!token) return res.status(400).json(new ApiResponse(400,null,"token not found"))
+      const currentDate = Date.now()
+    const user = await User.findOne({verificationToken:token,verificationTokenExpire: {
+      $lt: currentDate
+    } });
+    if(!user){
+      return res.status(200).json(new ApiResponse(200,null,"Token expired"))
+    }
+    const verify = await User.findOneAndUpdate({_id:user._id},{
+      $set:{
+        isVerified:true
+      }
+    },{new:true})
+    return res.status(200).json(new ApiResponse(200,verify,'verified'))
+  } catch (error) {
+      return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+  }
+}
+
 //Forgot Password
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body; 
     var transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
+      host:"smtp.gmail.com",
       port: 2525,
       auth: {
         user: "365cd42db5c07c",
@@ -154,7 +179,8 @@ const updateUserName = async(req,res)=>{
   try {
     const {username} =  req.body;
     const id = req.user.id
-    const response = await User.findByIdAndUpdate({_id:id},{$set:{username:username}},{new:true});
+    const response = await User.findByIdAndUpdate({_id:id},{$set:{username:username
+    }},{new:true});
     return res.status(200).json(new ApiResponse(200,response,'Username updated successfully'))
   } catch (error) {
     console.log(error)
@@ -162,4 +188,4 @@ const updateUserName = async(req,res)=>{
   }
 }
 
-export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName };
+export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName ,verify };
