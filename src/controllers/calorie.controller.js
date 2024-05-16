@@ -182,7 +182,7 @@ const changeCalorie = async (req, res) => {
     console.error(e);
   }
 };
-const updateAge = async (req, res) => {
+const updateAge = async (req, res) => {  
   try {
     const { age } = req.body;
     const userId = req.user.id;
@@ -778,3 +778,4 @@ export {
   updateActivity,
   updateGender,
 };
+    
