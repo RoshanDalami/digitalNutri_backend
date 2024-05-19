@@ -2,43 +2,49 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
-    {
-        email: {
-            type: String,
-            required: true,
-            unique: true
-        },
-        username:{
-            type: String,
-            required: true,
-            unique: true
-        },
-        mobile:{
-            type: String,
-            required: true,
-            unique: true
-        },
-        password: {
-            type: String,
-            required: true
-        },
-        isVerified:{
-            type:Boolean,
-            required:true,
-            default:false
-        },
-        verificationToken:{
-            type:String,
-
-        },
-        verificationTokenExpire:{
-            type:Date
-        }
-    }, 
-    { 
-        timestamps: true 
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    mobile: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    isVerified: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+    },
+    verificationTokenExpire: {
+      type: Date,
+    },
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    referredBy: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 
-
-export const User  = mongoose.model('User', userSchema);
+export const User = mongoose.model("User", userSchema);
