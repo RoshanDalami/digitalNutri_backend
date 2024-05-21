@@ -9,6 +9,6 @@ router.route("/login").post(loginUser);
 router.route('/').get(validateToken,currentUser);
 router.route('/forgotPassword').post(forgotPassword)
 router.route('/updateUsername').post(validateToken,updateUserName)
-router.route('/verifyemail').get(verify)
+router.route('/verifyemail').post(verify)
 
 export default router;

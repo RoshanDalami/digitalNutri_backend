@@ -58,9 +58,6 @@ const registerUser = async (req, res) => {
   process.env.ACCESS_TOKEN,
   {expiresIn: '1h',},
   );
-
-  await sendMail(email,)
-
     //Returning the registered user
     return res.status(200).json(new ApiResponse(200, {token: accessToken, user: createdUser}, "Signup Successfull"));
     }
@@ -125,7 +122,7 @@ const currentUser = async (req, res) => {
 
 const verify = async (req,res)=>{
   try {
-    const {token} = req.query;
+    const {token} = req.body;
     if(!token) return res.status(400).json(new ApiResponse(400,null,"token not found"))
       const currentDate = Date.now()
     const user = await User.findOne({verificationToken:token,verificationTokenExpire: {
@@ -142,6 +139,20 @@ const verify = async (req,res)=>{
     return res.status(200).json(new ApiResponse(200,verify,'verified'))
   } catch (error) {
       return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+  }
+}
+
+const sendVerificationCode = async (req,res)=>{
+  try {
+    function generateOTP() {
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      return otp.toString();
+    }
+    
+      const hashedToken = generateOTP()
+      await sendMail()
+  } catch (error) {
+    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
   }
 }
 
@@ -188,4 +199,4 @@ const updateUserName = async(req,res)=>{
   }
 }
 
-export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName ,verify };
+export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName ,verify,sendVerificationCode };
