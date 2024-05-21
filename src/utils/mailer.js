@@ -9,7 +9,13 @@ dotenv.config({
 
 export async function sendMail(email,userId){
 try {
-    const hashedToken = await bcrypt.hash(process.env.ACCESS_TOKEN,10);
+  function generateOTP() {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    return otp.toString();
+  }
+  
+    const hashedToken = generateOTP()
+
     await User.findOneAndUpdate({_id:userId},{
         verificationToken:hashedToken,
         verificationTokenExpire:Date.now() + 3600
@@ -28,7 +34,7 @@ try {
         from:'roshandalami0@gmail.com',
         to : email ,
         subject: 'Verify your email',
-        html:`<p> Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to verify your email </p>`
+        html:`<p> Your verification Code is <h1>${hashedToken}</h1> </p>`
       }
 
       const mailresponse = await transport.sendMail
