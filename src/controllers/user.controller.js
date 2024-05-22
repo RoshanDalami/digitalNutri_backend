@@ -4,6 +4,18 @@ import { User } from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import { sendMail } from "../utils/mailer.js";
+import { Code } from "../models/code.model.js";
+
+const sendCode = async (req,res)=>{
+  try {
+    const {email} = req.body;
+    const mail = await sendMail(email);
+    if(!mail) return res.status(400).json(new ApiResponse(400,null, "Code sending Failed"));
+    return res.status(200).json(new ApiResponse(200,null,'Code sent to email'))
+  } catch (error) {
+    return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
+  }
+}
 
 const registerUser = async (req, res) => {
     try{
@@ -46,7 +58,6 @@ const registerUser = async (req, res) => {
             message: "Somthing went wrong while registering user"
         })
     };
-    await sendMail(createdUser.email,createdUser._id)
     const accessToken = await jwt.sign({
       user: {
           id: user._id,
@@ -125,18 +136,14 @@ const verify = async (req,res)=>{
     const {token} = req.body;
     if(!token) return res.status(400).json(new ApiResponse(400,null,"token not found"))
       const currentDate = Date.now()
-    const user = await User.findOne({verificationToken:token,verificationTokenExpire: {
+    const user = await Code.findOne({code:token,validTime: {
       $lt: currentDate
     } });
     if(!user){
       return res.status(200).json(new ApiResponse(200,null,"Token expired"))
     }
-    const verify = await User.findOneAndUpdate({_id:user._id},{
-      $set:{
-        isVerified:true
-      }
-    },{new:true})
-    return res.status(200).json(new ApiResponse(200,verify,'verified'))
+    
+    return res.status(200).json(new ApiResponse(200,null,'verified'))
   } catch (error) {
       return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
   }
@@ -199,4 +206,4 @@ const updateUserName = async(req,res)=>{
   }
 }
 
-export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName ,verify,sendVerificationCode };
+export { registerUser, loginUser, currentUser, singOut, forgotPassword,updateUserName ,verify,sendVerificationCode ,sendCode};

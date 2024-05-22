@@ -2,24 +2,29 @@ import bcrypt from 'bcrypt';
 import { User } from '../models/user.model.js';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { Code } from '../models/code.model.js';
 dotenv.config({
     path: './.env'
 });
 
 
-export async function sendMail(email,userId){
+export async function sendMail(email){
 try {
   function generateOTP() {
     const otp = Math.floor(100000 + Math.random() * 900000);
     return otp.toString();
   }
   
-    const hashedToken = generateOTP()
+    const hashedToken = generateOTP();
 
-    await User.findOneAndUpdate({_id:userId},{
-        verificationToken:hashedToken,
-        verificationTokenExpire:Date.now() + 3600
+    await Code.deleteMany({email:email});
+    await Code.create({
+      email:email,
+      code:hashedToken,
+      validTime : Date.now() + 36000
     })
+
+    
 
     var transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
