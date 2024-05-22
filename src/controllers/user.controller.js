@@ -140,9 +140,9 @@ const verify = async (req,res)=>{
       $lt: currentDate
     } });
     if(!user){
-      return res.status(200).json(new ApiResponse(200,null,"Token expired"))
+      return res.status(400).json(new ApiResponse(400,null,"Invalid Verification Code"))
     }
-    
+   
     return res.status(200).json(new ApiResponse(200,null,'verified'))
   } catch (error) {
       return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"))
