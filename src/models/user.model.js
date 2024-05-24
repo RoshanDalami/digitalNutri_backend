@@ -22,11 +22,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    isVerified: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
+   
     verificationToken: {
       type: String,
     },
@@ -41,6 +37,11 @@ const userSchema = new Schema(
     referredBy: {
       type: String,
     },
+    isTargetSet :{
+      type:Boolean,
+      required:true,
+      default : false
+    }
   },
   {
     timestamps: true,
