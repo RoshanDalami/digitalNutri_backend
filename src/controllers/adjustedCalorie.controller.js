@@ -1,12 +1,12 @@
 import { AdjustedCalorie } from "../models/adjustedCalorie.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Calorie } from "../models/calorie.model.js";
-
+import { User } from "../models/user.model.js";
 const updatedCalorieUpload = async (req, res) => {
   try {
     const { weightGoal, weightGoalValue, isDiabetic, adjustedCalorieValue } =
       req.body;
-
+    console.log(weightGoal, weightGoalValue, isDiabetic, adjustedCalorieValue)
     if (!weightGoal || !weightGoalValue || !isDiabetic) {
       return res.status(400).json({ message: "All Fields are Required" });
     }
@@ -20,6 +20,14 @@ const updatedCalorieUpload = async (req, res) => {
       isDiabetic,
       adjustedCalorieValue,
     });
+
+    if(adjustedValues){
+      await User.findOneAndUpdate({_id:req.user.id},{
+        $set:{
+          isTargetSet:true
+        }
+      })
+    }
 
     res.status(201).json(new ApiResponse(200, adjustedValues, "Created"));
   } catch (e) {

@@ -107,7 +107,7 @@ const loginUser = async (req, res) => {
         },
     },
     process.env.ACCESS_TOKEN,
-    {expiresIn: '1d',},
+    {expiresIn: '30d',},
     );
       return res.status(200).json(new ApiResponse(200, {token: accessToken, user: userWOPassword}, "Login Successfull"));
     }
