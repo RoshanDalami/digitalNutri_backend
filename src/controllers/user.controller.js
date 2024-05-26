@@ -9,6 +9,10 @@ import { Code } from "../models/code.model.js";
 const sendCode = async (req,res)=>{
   try {
     const {email} = req.body;
+    const userExist = await User.findOne({email:email});
+    if(userExist){
+      return res.status(400).json(new ApiResponse(400,null,"User already exist with this email"))
+    }
     const mail = await sendMail(email);
     if(!mail) return res.status(400).json(new ApiResponse(400,null, "Code sending Failed"));
     return res.status(200).json(new ApiResponse(200,null,'Code sent to email'))
