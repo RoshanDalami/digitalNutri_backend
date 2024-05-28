@@ -92,9 +92,10 @@ const calculateCalorie = async (req, res) => {
       targetWeight,
     });
 
-    res.status(201).json(new ApiResponse(200, calorieValue, "Created"));
+    return res.status(201).json(new ApiResponse(200, calorieValue, "Created"));
   } catch (err) {
-    res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
+    console.log(err)
+    return res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
   }
 };
 
