@@ -9,7 +9,7 @@ import { Code } from "../models/code.model.js";
 const sendCode = async (req,res)=>{
   try {
     const {email} = req.body;
-    const userExist = await User.findOne({email:email});
+    const userExist = await User.findOne({$or:[{email:email}]});
     if(userExist){
       return res.status(400).json(new ApiResponse(400,null,"User already exist with this email"))
     }
@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
 
     //Check if the user already exists
     const existedUser = await User.findOne({
-        $or: [{email}, {username}, {mobile}]
+        $or: [{email},{mobile}]
     });
 
     if(existedUser){
