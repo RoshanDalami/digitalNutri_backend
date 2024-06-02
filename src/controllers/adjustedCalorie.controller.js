@@ -10,15 +10,20 @@ const updatedCalorieUpload = async (req, res) => {
     if (!weightGoal || !weightGoalValue || !isDiabetic) {
       return res.status(400).json({ message: "All Fields are Required" });
     }
-
+    let carbsInGram
     await AdjustedCalorie.deleteMany({ userId: req.user.id });
-
+      if(isDiabetic == 'true'){
+        carbsInGram = ((45 / 100) * adjustedCalorieValue) / 4;
+      }else{
+        carbsInGram = 0
+      }
     const adjustedValues = await AdjustedCalorie.create({
       userId: req.user.id,
       weightGoal,
       weightGoalValue,
       isDiabetic,
       adjustedCalorieValue,
+      carbsInGram:carbsInGram
     });
 
     if(adjustedValues){
@@ -53,7 +58,8 @@ const updateDiabetic = async (req, res) => {
     if (isDiabetic === true) {
       const response = await AdjustedCalorie.findOne({ userId: req.user.id });
       const requiredCalore = await Calorie.findOne({userId:req.user.id})
-      const carbsIngram = ((45 / 100) * requiredCalore.calorieRequirement) / 4;
+      console.log(requiredCalore.calorieRequirement)
+      const carbsIngram = ((45 / 100) * response.adjustedCalorieValue) / 4;
       const updated = await AdjustedCalorie.findOneAndUpdate(
         { userId: req.user.id },
         {
