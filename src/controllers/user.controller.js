@@ -23,7 +23,7 @@ const sendCode = async (req,res)=>{
 
 const registerUser = async (req, res) => {
     try{
-        const { email, username, mobile, password } = req.body;
+        const { email, username, mobile, password,role } = req.body;
     
     //Validat for all fields not to be empty
     if(!email || !username || !mobile || !password){
@@ -50,6 +50,7 @@ const registerUser = async (req, res) => {
       username,
       mobile,
       password: hashedPassword,
+      role
     });
 
 
@@ -67,11 +68,12 @@ const registerUser = async (req, res) => {
           id: user._id,
           email: user.email,
           username: user.username,
-          mobile: user.mobile
+          mobile: user.mobile,
+          role:user.role
       },
   },
   process.env.ACCESS_TOKEN,
-  {expiresIn: '1h',},
+  {expiresIn: '1d',},
   );
     //Returning the registered user
     return res.status(200).json(new ApiResponse(200, {token: accessToken, user: createdUser}, "Signup Successfull"));
@@ -107,7 +109,8 @@ const loginUser = async (req, res) => {
             id: user._id,
             email: user.email,
             username: user.username,
-            mobile: user.mobile
+            mobile: user.mobile,
+            role:user.role
         },
     },
     process.env.ACCESS_TOKEN,
