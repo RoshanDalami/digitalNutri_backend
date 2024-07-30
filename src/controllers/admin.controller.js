@@ -1,8 +1,10 @@
 import { User } from "../models/user.model.js";
 import { AdjustedCalorie } from "../models/adjustedCalorie.model.js";
+import {FoodComposition} from "../models/foodComposition.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Calorie } from "../models/calorie.model.js";
 import { LoggedFood } from "../models/logFood.model.js";
+import {Promo} from "../models/promocode.model.js";
 
 export async function GetUserList(req, res) {
   try {
@@ -252,3 +254,40 @@ export const getTotalValuesForDinnerByUser = async (req, res) => {
       .json(new ApiResponse(500, false, "Internal Server Error", false));
   }
 };
+
+export const dashboardItems = async(req,res)=>{
+  try{
+    const totalActiveUser = await User.countDocuments({
+      isActive: true
+    });
+    const totalInactiveUsers = await User.countDocuments({isActive: false});
+    const totalUser = await User.countDocuments({});
+    const totalNumberOfFoods = await FoodComposition.countDocuments({});
+    const PromoCodeCount = await Promo.countDocuments({});
+    const result = [
+      {
+        title:"Total Active User",
+        value: totalActiveUser
+      }, {
+        title:"Total InActive User",
+        value: totalInactiveUsers
+      },
+      {
+        title:"Total Registered User",
+        value: totalUser
+      },
+      {
+        title:"Total Listed Food",
+        value:totalNumberOfFoods
+      },
+      {
+        title:"Total Promo codes",
+        value: PromoCodeCount
+      },
+
+    ];
+    return res.status(200).json(new ApiResponse(200,result,"Data generated successfullly"));
+  }catch (error){
+return res.status(error.statusCode).json(new ApiResponse(error.statusCode,null,error.messages))
+  }
+}

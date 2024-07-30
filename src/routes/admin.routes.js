@@ -6,6 +6,7 @@ import {
   getTotalValuesForLunchByUser,
   getTotalValuesForSnacksByUser,
   getTotalValuesForDinnerByUser,
+    dashboardItems
 } from "../controllers/admin.controller.js";
 import { CreateFoodComposition , DeleteFoodComposition ,GetFoodCompositionById} from "../controllers/foodComposition.controller.js";
 import {
@@ -67,6 +68,10 @@ AdminRoutes.route("/getPromoCodeById/:id").get(
 AdminRoutes.route("/deletePromoCode/:id").delete(
   validateToken,
   DeletePromoCode
+);
+AdminRoutes.route("/dashboard").get(
+  validateToken,
+dashboardItems
 );
 
 export default AdminRoutes;
