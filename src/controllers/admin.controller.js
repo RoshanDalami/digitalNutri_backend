@@ -291,3 +291,18 @@ export const dashboardItems = async(req,res)=>{
 return res.status(error.statusCode).json(new ApiResponse(error.statusCode,null,error.messages))
   }
 }
+
+export const ChangeUserStatus = async(req,res)=>{
+  try {
+    const {id} = req.params;
+    const getUser = await User.findOne({_id:id});
+    const response = await User.findByIdAndUpdate({_id:id},{
+      $set:{
+        isActive: !getUser?.isActive
+      }
+    },{new:true}).select("-password")
+    return res.status(200).json(new ApiResponse(200,response,"User status changed successfully"))
+  } catch (error) {
+    return res.status(error.statusCode).json(new ApiResponse(error.statusCode,null,error.message));
+  }
+}
