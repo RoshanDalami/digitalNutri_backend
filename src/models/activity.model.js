@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const activitySchema = new mongoose.Schema({
-    activityName:{
+    title:{
         type: String
     },
-    activityValue:{
+    value:{
         type: Number
     }
 });
