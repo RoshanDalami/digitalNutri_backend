@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "*",
     credentials: true,
   })
 );
@@ -30,5 +30,8 @@ app.use("/api/v1/log", logRouter);
 app.use("/api/v1/filter",FilterRoute);
 app.use("/api/v1/promo",PromoRouter);
 app.use("/api/v1/admin",AdminRoutes);
+app.get("/*", (req, res) => {
+  res.status(200).json({ message: "Message from app express",data:true });
+});
 
-export { app };
+export default app;
