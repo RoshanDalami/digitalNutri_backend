@@ -2,7 +2,7 @@
 import xlsx from 'xlsx'
 import { MongoClient } from 'mongodb';
 // Replace with your MongoDB Atlas connection string
-const uri = "mongodb+srv://roshandalami0:meroaahar@cluster0.fnmno.mongodb.net";
+const uri = "";
 
 async function uploadExcelToMongoDB(filePath) {
   // Read the Excel file

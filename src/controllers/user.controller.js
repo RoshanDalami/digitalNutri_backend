@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import { sendMail } from "../utils/mailer.js";
+import { sendMail,sendMailForgotPassword } from "../utils/mailer.js";
 import { Code } from "../models/code.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
@@ -161,7 +161,7 @@ const singOut = async (req, res) => {
 const currentUser = async (req, res) => {
   res.json({ message: "Get all users" });
 };
-
+//verify code .
 const verify = async (req, res) => {
   try {
     const { token } = req.body;
@@ -209,17 +209,10 @@ const sendVerificationCode = async (req, res) => {
 //Forgot Password
 const forgotPassword = async (req, res) => {
   try {
-    const { email, oldPassword, newPassword } = req.body;
+    const { email,  newPassword } = req.body;
     const isUserExist = await User.findOne({ email: email });
     if (!isUserExist)
       throw new ApiError(400, "User doesn't exit with this email");
-
-    const isOldPasswordMatched = await bcrypt.compare(
-      oldPassword,
-      isUserExist.password
-    );
-    if (!isOldPasswordMatched)
-      throw new ApiError(400, "Old password doesn't match");
 
     const hashedPassword = await bcrypt.hash(newPassword,10)
 
@@ -263,7 +256,9 @@ const checkUserWithEmail = async(req,res)=>{
     const {email} = req.body;
     const  userExist = await User.findOne({email:email});
     if(!userExist) throw new ApiError(400,"User not found !!!");
-    return res.status(200).json(new ApiResponse(200,null,"User Found"))
+    const mail = await sendMailForgotPassword(email);
+    if(!mail) throw new ApiError(400,"Error while sending email")
+    return res.status(200).json(new ApiResponse(200,null,"User Found and OTP send successfully"))
   } catch (error) {
     return res.status(error.statusCode).json(new ApiResponse(error.statusCode,null,error.message))
   }
