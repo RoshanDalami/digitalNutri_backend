@@ -9,7 +9,9 @@ async function sevenDaysData(req, res) {
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter(
-      (item) => item.date === date.toISOString().split('T')[0] || item.createdAt >= sevenDataBack.toISOString().split('T')[0]
+      (item) =>
+        item.date === date.toISOString().split("T")[0] ||
+        item.createdAt >= sevenDataBack.toISOString().split("T")[0]
     );
     const breakfastData = filterData?.filter(
       (item) => item.mealTime === "Breakfast"
@@ -217,7 +219,9 @@ async function fourteenDaysData(req, res) {
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter(
-      (item) => item.date === date.toISOString().split('T')[0] || item.date >= sevenDataBack.toISOString().split('T')[0]
+      (item) =>
+        item.date === date.toISOString().split("T")[0] ||
+        item.date >= sevenDataBack.toISOString().split("T")[0]
     );
     const breakfastData = filterData?.filter(
       (item) => item.mealTime === "Breakfast"
@@ -421,11 +425,15 @@ async function fourteenDaysData(req, res) {
 async function thirtyDaysData(req, res) {
   const userId = req.user.id;
   const date = new Date();
-  const thirtyDaysBack = new Date(new Date().setDate(new Date().getDate() - 30));
+  const thirtyDaysBack = new Date(
+    new Date().setDate(new Date().getDate() - 30)
+  );
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter(
-      (item) => item.date === date.toISOString().split('T')[0] || item.createdAt >= thirtyDaysBack.toISOString().split('T')[0]
+      (item) =>
+        item.date === date.toISOString().split("T")[0] ||
+        item.createdAt >= thirtyDaysBack.toISOString().split("T")[0]
     );
     const breakfastData = filterData?.filter(
       (item) => item.mealTime === "Breakfast"
@@ -633,11 +641,7 @@ async function customDateDaysData(req, res) {
   try {
     const loggedFood = await LoggedFood.find({ userId: userId });
     const filterData = loggedFood.filter((item) => {
-      return (
-        item.date >=
-          date1 &&
-        item.date <= date2
-      );
+      return item.date >= date1 && item.date <= date2;
     });
     // console.log(filterData)
     const breakfastData = filterData?.filter(
@@ -846,16 +850,13 @@ async function filterWithMealTimeAndDate(req, res) {
   try {
     const response = await LoggedFood.find({ userId: userId });
     const filteredData = response.filter((item) => {
-      return (
-        item.mealTime === mealTime &&
-        item.date === date
-      );
+      return item.mealTime === mealTime && item.date === date;
     });
 
     const foodData = filteredData?.filter((item) => {
       return item.foodData;
     });
-    
+
     const calorieValue = filteredData
       ?.map((item) => item.foodData?.calorieValue)
       .reduce((acc, amount) => acc + amount, 0);
@@ -894,7 +895,7 @@ async function filterWithMealTimeAndDate(req, res) {
       fibre,
       iron,
       calcium,
-      vitaminC
+      vitaminC,
     };
 
     return res
