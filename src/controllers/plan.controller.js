@@ -56,6 +56,26 @@ export const GetPlan = async (req, res) => {
       .json(new ApiResponse(500, null, "Internal Server Error"));
   }
 };
+export const GetActivePlan = async (req, res) => {
+  try {
+    const response = await Plan.find({
+      isActive: true,
+    });
+    return res
+      .status(200)
+      .json(new ApiResponse(200, response, "Plan successfully fetched"));
+  } catch (error) {
+    return res
+      .status(error.statusCode || 500)
+      .json(
+        new ApiResponse(
+          error.statusCode || 500,
+          null,
+          error.message || "Internal Server Error"
+        )
+      );
+  }
+};
 
 export const GetPlanById = async (req, res) => {
   try {
