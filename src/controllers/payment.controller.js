@@ -6,8 +6,16 @@ import { User } from "../models/user.model.js";
 
 export const CreatePaymentRecord = async (req, res) => {
   try {
-    const { paymentStatus, userId, startDate, amountPaid, planDuration } =
-      req.body;
+    const {
+      paymentStatus,
+      userId,
+      startDate,
+      amountPaid,
+      planDuration,
+      priceBeforeDiscount,
+      discountPercentage,
+      code,
+    } = req.body;
 
     if (!paymentStatus) {
       throw new ApiError(400, "Payment failed");
@@ -26,6 +34,9 @@ export const CreatePaymentRecord = async (req, res) => {
       subscriptionEndDate: expireDate,
       amountPaid: amountPaid,
       planDuration: planDuration,
+      priceBeforeDiscount: priceBeforeDiscount,
+      discountPercentage: discountPercentage,
+      code: code.toUpperCase(),
     });
     if (!newPayment) throw new ApiError(400, "Payment required failed");
 
@@ -48,10 +59,20 @@ export const CreatePaymentRecord = async (req, res) => {
         )
       );
   } catch (error) {
-console.log(error);
+    console.log(error);
     return res
       .status(error.statusCode)
       .json(new ApiError(error.statusCode, null, error.message));
   }
 };
 
+export const GetPaymentRecord = async (req, res) => {
+  try {
+    const response = await Payment.find({});
+    return res.status(200).json(new ApiResponse(200, response, "fetched"));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
+  }
+};
