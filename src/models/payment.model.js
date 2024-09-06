@@ -22,6 +22,15 @@ const paymentSchema = new Schema(
     planDuration:{
         type: Number
     },
+    priceBeforeDiscount:{
+      type:Number
+    },
+    discountPercentage:{
+      type:Number
+    },
+    code:{
+      type:String
+    }
   },
   { timestamps: true }
 );
