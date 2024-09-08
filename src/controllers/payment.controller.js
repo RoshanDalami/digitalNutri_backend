@@ -36,7 +36,7 @@ export const CreatePaymentRecord = async (req, res) => {
       planDuration: planDuration,
       priceBeforeDiscount: priceBeforeDiscount,
       discountPercentage: discountPercentage,
-      code: code.toUpperCase(),
+      code: code?.toUpperCase(),
     });
     if (!newPayment) throw new ApiError(400, "Payment required failed");
 

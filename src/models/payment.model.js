@@ -16,21 +16,21 @@ const paymentSchema = new Schema(
     subscriptionEndDate: {
       type: String,
     },
-    amountPaid:{
-        type:Number
+    amountPaid: {
+      type: Number,
     },
-    planDuration:{
-        type: Number
+    planDuration: {
+      type: Number,
     },
-    priceBeforeDiscount:{
-      type:Number
+    priceBeforeDiscount: {
+      type: Number,
     },
-    discountPercentage:{
-      type:Number
+    discountPercentage: {
+      type: Number,
     },
-    code:{
-      type:String
-    }
+    code: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
