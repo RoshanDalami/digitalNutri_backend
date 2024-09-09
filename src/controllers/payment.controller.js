@@ -16,6 +16,14 @@ export const CreatePaymentRecord = async (req, res) => {
       discountPercentage,
       code,
     } = req.body;
+    console.log( paymentStatus,
+      userId,
+      startDate,
+      amountPaid,
+      planDuration,
+      priceBeforeDiscount,
+      discountPercentage,
+      code,'testing');
 
     if (!paymentStatus) {
       throw new ApiError(400, "Payment failed");
@@ -40,6 +48,7 @@ export const CreatePaymentRecord = async (req, res) => {
     });
     if (!newPayment) throw new ApiError(400, "Payment required failed");
 
+    
     await User.findOneAndUpdate(
       { _id: userId },
       {
