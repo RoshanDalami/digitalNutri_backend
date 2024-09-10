@@ -38,6 +38,7 @@ export const CreatePlan = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, null, "Plan created successfully"));
   } catch (error) {
+    console.log(error);
     return res
       .status(200)
       .json(new ApiResponse(500, null, "Internal Server Error"));
