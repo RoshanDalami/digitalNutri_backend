@@ -4,7 +4,7 @@ import { Plan } from "../models/plan.model.js";
 export const CreatePlan = async (req, res) => {
   try {
     const { id, planTitle, planDuration, planPrice } = req.body;
-
+    console.log(id, planTitle, planDuration, planPrice);
     if (!planTitle || !planDuration || !planPrice)
       throw new ApiError(400, "All Fields are required");
 
@@ -40,8 +40,14 @@ export const CreatePlan = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
-      .json(new ApiResponse(500, null, "Internal Server Error"));
+      .status(error.statusCode || 500)
+      .json(
+        new ApiResponse(
+          error.statusCode || 500,
+          null,
+          error.message || "Internal Server Error"
+        )
+      );
   }
 };
 
