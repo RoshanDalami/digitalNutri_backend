@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import { sendMail,sendMailForgotPassword } from "../utils/mailer.js";
+import { sendMail, sendMailForgotPassword } from "../utils/mailer.js";
 import { Code } from "../models/code.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
@@ -165,28 +166,35 @@ const currentUser = async (req, res) => {
 const verify = async (req, res) => {
   try {
     const { token } = req.body;
+    console.log(token, "Verify");
     if (!token)
       return res
         .status(400)
         .json(new ApiResponse(400, null, "token not found"));
     const currentDate = Date.now();
     const user = await Code.findOne({
-      code: token,
-      validTime: {
-        $lt: currentDate,
-      },
+      $and: [
+        { code: token },
+        {
+          validTime: {
+            $lt: currentDate,
+          },
+        },
+      ],
     });
-    if (!user) {
-      return res
-        .status(400)
-        .json(new ApiResponse(400, null, "Invalid Verification Code"));
-    }
+    if (!user) throw new ApiError(400, "Invalid Verification Code");
 
     return res.status(200).json(new ApiResponse(200, null, "verified"));
   } catch (error) {
     return res
-      .status(500)
-      .json(new ApiResponse(500, null, "Internal Server Error"));
+      .status(error.statusCode || 500)
+      .json(
+        new ApiResponse(
+          error.statusCode || 500,
+          null,
+          error.message || "Internal Server Error"
+        )
+      );
   }
 };
 
@@ -209,22 +217,27 @@ const sendVerificationCode = async (req, res) => {
 //Forgot Password
 const forgotPassword = async (req, res) => {
   try {
-    const { email,  newPassword } = req.body;
+    const { email, newPassword } = req.body;
     const isUserExist = await User.findOne({ email: email });
     if (!isUserExist)
       throw new ApiError(400, "User doesn't exit with this email");
 
-    const hashedPassword = await bcrypt.hash(newPassword,10)
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    const changedPassword = await User.findOneAndUpdate({email:email},{
-      $set:{
-        password:hashedPassword
+    const changedPassword = await User.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          password: hashedPassword,
+        },
       }
-    })
-    if(!changedPassword) throw new ApiError(400,"Error while changing password");
+    );
+    if (!changedPassword)
+      throw new ApiError(400, "Error while changing password");
 
-    return res.status(200).json(new ApiResponse(200,null,'Password changed successfully'));
-
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Password changed successfully"));
   } catch (error) {
     return res
       .status(error.statusCode)
@@ -251,18 +264,22 @@ const updateUserName = async (req, res) => {
   }
 };
 
-const checkUserWithEmail = async(req,res)=>{
+const checkUserWithEmail = async (req, res) => {
   try {
-    const {email} = req.body;
-    const  userExist = await User.findOne({email:email});
-    if(!userExist) throw new ApiError(400,"User not found !!!");
+    const { email } = req.body;
+    const userExist = await User.findOne({ email: email });
+    if (!userExist) throw new ApiError(400, "User not found !!!");
     const mail = await sendMailForgotPassword(email);
-    if(!mail) throw new ApiError(400,"Error while sending email")
-    return res.status(200).json(new ApiResponse(200,null,"User Found and OTP send successfully"))
+    if (!mail) throw new ApiError(400, "Error while sending email");
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "User Found and OTP send successfully"));
   } catch (error) {
-    return res.status(error.statusCode).json(new ApiResponse(error.statusCode,null,error.message))
+    return res
+      .status(error.statusCode)
+      .json(new ApiResponse(error.statusCode, null, error.message));
   }
-}
+};
 export {
   registerUser,
   loginUser,
@@ -273,5 +290,5 @@ export {
   verify,
   sendVerificationCode,
   sendCode,
-  checkUserWithEmail
+  checkUserWithEmail,
 };
