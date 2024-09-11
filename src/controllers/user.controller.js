@@ -181,6 +181,7 @@ const verify = async (req, res) => {
         },
       ],
     });
+    console.log(user);
     if (!user) throw new ApiError(400, "Invalid Verification Code");
 
     return res.status(200).json(new ApiResponse(200, null, "verified"));
