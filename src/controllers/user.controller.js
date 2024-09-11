@@ -169,22 +169,27 @@ const verify = async (req, res) => {
     if (!token)
       return res
         .status(400)
-        .json(new ApiResponse(400, null, "token not found"));
+        .json(new ApiResponse(400, null, "Token not found"));
+
     const currentDate = Date.now();
+
+    // Query to check if the token exists and is still valid
     const user = await Code.findOne({
       $and: [
         { code: token },
         {
           validTime: {
-            $lt: currentDate,
+            $gt: currentDate, // Token should be valid if the validTime is greater than current time
           },
         },
       ],
     });
-    console.log(user);
-    if (!user) throw new ApiError(400, "Invalid Verification Code");
 
-    return res.status(200).json(new ApiResponse(200, null, "verified"));
+    console.log(user); // Check what this returns
+
+    if (!user) throw new ApiError(400, "Invalid or Expired Verification Code");
+
+    return res.status(200).json(new ApiResponse(200, null, "Verified"));
   } catch (error) {
     return res
       .status(error.statusCode || 500)
