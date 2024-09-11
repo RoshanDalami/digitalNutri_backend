@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sendMail, sendMailForgotPassword } from "../utils/mailer.js";
 import { Code } from "../models/code.model.js";
-import { ApiError } from "../utils/ApiError.js";
 
 const sendCode = async (req, res) => {
   try {
