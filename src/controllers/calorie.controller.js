@@ -267,7 +267,7 @@ const updateAge = async (req, res) => {
     if(response){
       const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
       if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
           $set:{
             carbsInGram : (calorieRequirement * .45) / 4
           }
@@ -376,7 +376,7 @@ const updateHeight = async (req, res) => {
     if(response){
       const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
       if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
           $set:{
             carbsInGram : (calorieRequirement * .45) / 4
           }
@@ -479,7 +479,7 @@ const updateWeight = async (req, res) => {
     if(response){
       const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
       if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
           $set:{
             carbsInGram : (calorieRequirement * .45) / 4
           }
@@ -673,7 +673,7 @@ const updateActivity = async (req, res) => {
     if(updateCalorie){
       const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
       if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
           $set:{
             carbsInGram : (calorieRequirement * .45) / 4
           }
@@ -791,7 +791,7 @@ const updateGender = async (req, res) => {
     if(updateCalorie){
       const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
       if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
           $set:{
             carbsInGram : (calorieRequirement * .45) / 4
           }
