@@ -94,8 +94,10 @@ const calculateCalorie = async (req, res) => {
 
     return res.status(201).json(new ApiResponse(200, calorieValue, "Created"));
   } catch (err) {
-    console.log(err)
-    return res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
+    console.log(err);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
   }
 };
 
@@ -183,7 +185,7 @@ const changeCalorie = async (req, res) => {
     console.error(e);
   }
 };
-const updateAge = async (req, res) => {  
+const updateAge = async (req, res) => {
   try {
     const { age } = req.body;
     const userId = req.user.id;
@@ -260,6 +262,16 @@ const updateAge = async (req, res) => {
             },
           }
         );
+      }
+    }
+    if(response){
+      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
+      if(adjustedCalorie?.isDiabetic){
+        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+          $set:{
+            carbsInGram : (calorieRequirement * .45) / 4
+          }
+        })
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -361,6 +373,16 @@ const updateHeight = async (req, res) => {
         );
       }
     }
+    if(response){
+      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
+      if(adjustedCalorie?.isDiabetic){
+        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+          $set:{
+            carbsInGram : (calorieRequirement * .45) / 4
+          }
+        })
+      }
+    }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
     console.log(error);
@@ -454,6 +476,16 @@ const updateWeight = async (req, res) => {
         );
       }
     }
+    if(response){
+      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
+      if(adjustedCalorie?.isDiabetic){
+        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+          $set:{
+            carbsInGram : (calorieRequirement * .45) / 4
+          }
+        })
+      }
+    }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
   } catch (error) {
     console.log(error);
@@ -517,6 +549,16 @@ const updateTargetWeight = async (req, res) => {
             },
           }
         );
+      }
+    }
+    if(response){
+      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
+      if(adjustedCalorie?.isDiabetic){
+        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+          $set:{
+            carbsInGram : (calorieRequirement * .45) / 4
+          }
+        })
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -615,17 +657,6 @@ const updateActivity = async (req, res) => {
             },
           }
         );
-      } else if (adjCal?.isDiabetic === true) {
-        await AdjustedCalorie.findOneAndUpdate(
-          { userId: req.user.id },
-          {
-            $set: {
-              weightGoal: "Lose",
-              weightGoalValue: adjCal?.weightGoalValue,
-              adjustedCalorieValue: (parseInt(calorieRequirement) * 0.45) / 4,
-            },
-          }
-        );
       } else {
         await AdjustedCalorie.findOneAndUpdate(
           { userId: req.user.id },
@@ -637,6 +668,16 @@ const updateActivity = async (req, res) => {
             },
           }
         );
+      }
+    }
+    if(updateCalorie){
+      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
+      if(adjustedCalorie?.isDiabetic){
+        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+          $set:{
+            carbsInGram : (calorieRequirement * .45) / 4
+          }
+        })
       }
     }
     return res
@@ -733,17 +774,6 @@ const updateGender = async (req, res) => {
             },
           }
         );
-      } else if (adjCal?.isDiabetic === true) {
-        await AdjustedCalorie.findOneAndUpdate(
-          { userId: req.user.id },
-          {
-            $set: {
-              weightGoal: "Lose",
-              weightGoalValue: adjCal?.weightGoalValue,
-              adjustedCalorieValue: (parseInt(calorieRequirement) * 0.45) / 4,
-            },
-          }
-        );
       } else {
         await AdjustedCalorie.findOneAndUpdate(
           { userId: req.user.id },
@@ -755,6 +785,17 @@ const updateGender = async (req, res) => {
             },
           }
         );
+      }
+    }
+
+    if(updateCalorie){
+      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
+      if(adjustedCalorie?.isDiabetic){
+        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+          $set:{
+            carbsInGram : (calorieRequirement * .45) / 4
+          }
+        })
       }
     }
     return res
@@ -779,4 +820,3 @@ export {
   updateActivity,
   updateGender,
 };
-    
