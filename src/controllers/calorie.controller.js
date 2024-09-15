@@ -554,7 +554,7 @@ const updateTargetWeight = async (req, res) => {
     if(response){
       const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
       if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOne({userId:req.user.id},{
+        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
           $set:{
             carbsInGram : (prevStatus?.calorieRequirement * .45) / 4
           }
