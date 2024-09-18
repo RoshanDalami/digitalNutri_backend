@@ -335,8 +335,12 @@ const updateHeight = async (req, res) => {
       { userId: userId },
       {
         $set: {
-          height: convertHeight(height, heightUnit),
+          height: convertHeight(
+            typeof height === "string" ? parseInt(height) : height,
+            heightUnit
+          ),
           calorieRequirement: calorieRequirement,
+          heightUnit: heightUnit,
         },
       },
       { new: true }
