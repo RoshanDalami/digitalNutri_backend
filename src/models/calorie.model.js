@@ -11,7 +11,7 @@ const calorieSchema = new Schema(
       type: Number,
       required: true,
     },
-    weightUnit:{
+    weightUnit: {
       type: String,
     },
     age: {
@@ -23,7 +23,7 @@ const calorieSchema = new Schema(
       required: true,
     },
     heightUnit: {
-      type: String
+      type: String,
     },
     gender: {
       type: String,
@@ -41,13 +41,16 @@ const calorieSchema = new Schema(
     },
     activity: {
       type: String,
-      required: true
+      required: true,
     },
-    calorieRequirement:{
-      type: String
+    calorieRequirement: {
+      type: String,
     },
-    targetWeight:{
-      type: Number 
+    targetWeight: {
+      type: Number,
+    },
+    targetWeightUnit: {
+      type: String,
     },
   },
   {
