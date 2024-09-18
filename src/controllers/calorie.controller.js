@@ -19,6 +19,7 @@ const calculateCalorie = async (req, res) => {
       isLactate,
       lactationPeriod,
       targetWeight,
+      targetWeightUnit,
     } = req.body;
     console.log(
       weight,
@@ -51,7 +52,7 @@ const calculateCalorie = async (req, res) => {
 
     // Conversion functions
     const convertWeight = (weight, weightUnit) =>
-      weightUnit.toLowerCase() === "pound" ? weight * 0.4535924 : weight;
+      weightUnit.toLowerCase() === "lbs" ? weight * 0.4535924 : weight;
     const convertHeight = (height, heightUnit) =>
       heightUnit.toLowerCase() === "feet" ? height * 30.48 : height;
 
@@ -66,22 +67,27 @@ const calculateCalorie = async (req, res) => {
         6.25 * convertHeight(height, heightUnit) -
         5 * age +
         5;
-
+    console.log(bmrValue, "BMR value");
     // Calculate Calorie Requirement
-    let calorieRequirement = calorieCalculate(bmrValue, activity);
+    let calorieRequirement = calorieCalculate(bmrValue, activity.trim());
 
     if (pregnancy.toLowerCase() === "true") {
       calorieRequirement += 350;
     } else if (isLactate.toLowerCase() === "true") {
       calorieRequirement += lactationPeriod <= 6 ? 600 : 520;
-    } else {
     }
 
     // Create Calorie entry
     const calorieValue = await Calorie.create({
       userId: req.user.id,
-      weight,
-      height,
+      weight: convertWeight(
+        typeof weight === "string" ? parseInt(weight) : weight,
+        weightUnit
+      ),
+      height: convertHeight(
+        typeof height === "string" ? parseInt(height) : height,
+        heightUnit
+      ),
       age,
       gender,
       activity,
@@ -89,7 +95,15 @@ const calculateCalorie = async (req, res) => {
       isLactate,
       lactationPeriod,
       calorieRequirement,
-      targetWeight,
+      targetWeight: convertWeight(
+        typeof targetWeight === "string"
+          ? parseInt(targetWeight)
+          : targetWeight,
+        targetWeightUnit
+      ),
+      weightUnit: weightUnit,
+      heightUnit: heightUnit,
+      targetWeightUnit: targetWeightUnit,
     });
 
     return res.status(201).json(new ApiResponse(200, calorieValue, "Created"));
@@ -105,20 +119,13 @@ const calculateCalorie = async (req, res) => {
 const calorieCalculate = (bmr, activity) => {
   switch (activity) {
     case "Sedentary":
-      return bmr * UserActivity.Sedentary;
+      return bmr * 1.4;
 
     case "Moderate":
-      return bmr * UserActivity.Moderate;
+      return bmr * 1.8;
 
     case "Heavy":
-      return bmr * UserActivity.Heavy;
-
-    case "Very":
-      return bmr * UserActivity.Very;
-
-    case "Extra":
-      return bmr * UserActivity.Extra;
-
+      return bmr * 2.3;
     default:
       console.log("Invalid activity value");
       return 0;
@@ -264,14 +271,19 @@ const updateAge = async (req, res) => {
         );
       }
     }
-    if(response){
-      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
-      if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-          $set:{
-            carbsInGram : (calorieRequirement * .45) / 4
+    if (response) {
+      const adjustedCalorie = await AdjustedCalorie.findOne({
+        userId: req.user.id,
+      });
+      if (adjustedCalorie?.isDiabetic) {
+        const updating = await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              carbsInGram: (calorieRequirement * 0.45) / 4,
+            },
           }
-        })
+        );
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -373,14 +385,19 @@ const updateHeight = async (req, res) => {
         );
       }
     }
-    if(response){
-      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
-      if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-          $set:{
-            carbsInGram : (calorieRequirement * .45) / 4
+    if (response) {
+      const adjustedCalorie = await AdjustedCalorie.findOne({
+        userId: req.user.id,
+      });
+      if (adjustedCalorie?.isDiabetic) {
+        const updating = await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              carbsInGram: (calorieRequirement * 0.45) / 4,
+            },
           }
-        })
+        );
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -394,7 +411,7 @@ const updateHeight = async (req, res) => {
 const updateWeight = async (req, res) => {
   try {
     const { weight, weightUnit } = req.body;
-    console.log(weightUnit, "weight unit");
+
     const userId = req.user.id;
     const prevStatus = await Calorie.findOne({ userId: userId });
 
@@ -426,8 +443,12 @@ const updateWeight = async (req, res) => {
       { userId: userId },
       {
         $set: {
-          weight: convertWeight(weight, weightUnit),
+          weight: convertWeight(
+            typeof weight === "string" ? parseInt(weight) : weight,
+            weightUnit
+          ),
           calorieRequirement: calorieRequirement,
+          weightUnit: weightUnit,
         },
       },
       { new: true }
@@ -476,14 +497,19 @@ const updateWeight = async (req, res) => {
         );
       }
     }
-    if(response){
-      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
-      if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-          $set:{
-            carbsInGram : (calorieRequirement * .45) / 4
+    if (response) {
+      const adjustedCalorie = await AdjustedCalorie.findOne({
+        userId: req.user.id,
+      });
+      if (adjustedCalorie?.isDiabetic) {
+        const updating = await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              carbsInGram: (calorieRequirement * 0.45) / 4,
+            },
           }
-        })
+        );
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -504,7 +530,15 @@ const updateTargetWeight = async (req, res) => {
     const response = await Calorie.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { targetWeight: convertWeight(targetWeight, weightUnit) },
+        $set: {
+          targetWeight: convertWeight(
+            typeof targetWeight === "string"
+              ? parseInt(targetWeight)
+              : targetWeight,
+            weightUnit
+          ),
+          targetWeightUnit: weightUnit,
+        },
       },
       { new: true }
     );
@@ -551,14 +585,19 @@ const updateTargetWeight = async (req, res) => {
         );
       }
     }
-    if(response){
-      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
-      if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-          $set:{
-            carbsInGram : (prevStatus?.calorieRequirement * .45) / 4
+    if (response) {
+      const adjustedCalorie = await AdjustedCalorie.findOne({
+        userId: req.user.id,
+      });
+      if (adjustedCalorie?.isDiabetic) {
+        const updating = await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              carbsInGram: (prevStatus?.calorieRequirement * 0.45) / 4,
+            },
           }
-        })
+        );
       }
     }
     return res.status(200).json(new ApiResponse(200, response, "Age updated"));
@@ -670,14 +709,19 @@ const updateActivity = async (req, res) => {
         );
       }
     }
-    if(updateCalorie){
-      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
-      if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-          $set:{
-            carbsInGram : (calorieRequirement * .45) / 4
+    if (updateCalorie) {
+      const adjustedCalorie = await AdjustedCalorie.findOne({
+        userId: req.user.id,
+      });
+      if (adjustedCalorie?.isDiabetic) {
+        const updating = await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              carbsInGram: (calorieRequirement * 0.45) / 4,
+            },
           }
-        })
+        );
       }
     }
     return res
@@ -788,14 +832,19 @@ const updateGender = async (req, res) => {
       }
     }
 
-    if(updateCalorie){
-      const adjustedCalorie = await AdjustedCalorie.findOne({userId:req.user.id});
-      if(adjustedCalorie?.isDiabetic){
-        const updating = await AdjustedCalorie.findOneAndUpdate({userId:req.user.id},{
-          $set:{
-            carbsInGram : (calorieRequirement * .45) / 4
+    if (updateCalorie) {
+      const adjustedCalorie = await AdjustedCalorie.findOne({
+        userId: req.user.id,
+      });
+      if (adjustedCalorie?.isDiabetic) {
+        const updating = await AdjustedCalorie.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            $set: {
+              carbsInGram: (calorieRequirement * 0.45) / 4,
+            },
           }
-        })
+        );
       }
     }
     return res
