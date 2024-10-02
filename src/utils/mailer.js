@@ -19,7 +19,7 @@ try {
     await Code.create({
       email:email,
       code:hashedToken,
-      validTime : Date.now() + 36000
+      validTime : Date.now() + (36000 * 5)
     })
 
     

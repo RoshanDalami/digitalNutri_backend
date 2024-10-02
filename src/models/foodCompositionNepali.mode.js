@@ -1,37 +1,49 @@
 import mongoose from "mongoose";
 
-const foodCompositionSchemaNepali = new mongoose.Schema({
+const foodCompositionSchemaNepali = new mongoose.Schema(
+  {
     foodCommodity: {
-        type: String,
+      type: String,
     },
     energy: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     carbohydrate: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     protein: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     fat: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     fibre: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     iron: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     calcium: {
-        type: Number,
+      type: Number,
+      default: 0,
     },
     vitaminC: {
-        type: Number,
-    }
-},
-    {
-        timestamps: true,
+      type: Number,
+      default: 0,
     },
+  },
+  {
+    timestamps: true,
+  }
 );
 
-export const FoodCompositionNepali = mongoose.model('FoodCompositionNepali', foodCompositionSchemaNepali);
+export const FoodCompositionNepali = mongoose.model(
+  "FoodCompositionNepali",
+  foodCompositionSchemaNepali
+);

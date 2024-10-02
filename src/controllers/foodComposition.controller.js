@@ -1,9 +1,17 @@
 import { FoodComposition } from "../models/foodComposition.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import { FoodCompositionNepali } from '../models/foodCompositionNepali.mode.js'
 const getFoodComposition = async (req, res) => {
   try {
     const foodComposition = await FoodComposition.find();
+    res.status(200).json(new ApiResponse(200, foodComposition, "Success"));
+  } catch (e) {
+    console.log(e);
+  }
+};
+const getFoodCompositionNepali = async (req, res) => {
+  try {
+    const foodComposition = await FoodCompositionNepali.find();
     res.status(200).json(new ApiResponse(200, foodComposition, "Success"));
   } catch (e) {
     console.log(e);
@@ -129,4 +137,4 @@ export const GetFoodCompositionById = async (req, res) => {
   }
 };
 
-export { getFoodComposition };
+export { getFoodComposition,getFoodCompositionNepali };
