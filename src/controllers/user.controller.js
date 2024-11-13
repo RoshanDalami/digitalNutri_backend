@@ -3,7 +3,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 import { sendMail, sendMailForgotPassword } from "../utils/mailer.js";
 import { Code } from "../models/code.model.js";
 
@@ -285,6 +284,26 @@ const checkUserWithEmail = async (req, res) => {
       .json(new ApiResponse(error.statusCode, null, error.message));
   }
 };
+const deleteAccountByUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const response = await User.deleteOne({ _id: userId });
+    if (!response) throw new ApiError(400, "Error while deleting account");
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Deleted Successfully"));
+  } catch (error) {
+    return res
+      .status(error.statusCode || 500)
+      .json(
+        new ApiResponse(
+          error.statusCode || 500,
+          null,
+          error.message || "Internal Server Error"
+        )
+      );
+  }
+};
 export {
   registerUser,
   loginUser,
@@ -296,4 +315,5 @@ export {
   sendVerificationCode,
   sendCode,
   checkUserWithEmail,
+  deleteAccountByUser,
 };
