@@ -22,6 +22,6 @@ router.route("/updateUsername").post(validateToken, updateUserName);
 router.route("/verifyemail").post(verify);
 router.route("/sendCode").post(sendCode);
 router.route("/checkUserWithEmail").post(checkUserWithEmail);
-router.route("/deleteAccount").get(validateToken, deleteAccountByUser);
+router.route("/deleteAccount").delete(validateToken, deleteAccountByUser);
 
 export default router;
