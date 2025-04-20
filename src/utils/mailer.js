@@ -23,7 +23,8 @@ try {
     })
 
     
-
+console.log({  user: process.env.NODEMAILER_USER,
+  pass: process.env.NODEMAILER_PASSWORD},"server")
     var transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 465,
