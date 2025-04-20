@@ -53,7 +53,7 @@ export const CreatePlan = async (req, res) => {
 
 export const GetPlan = async (req, res) => {
   try {
-    const response = await Plan.find({ isActive: true });
+    const response = await Plan.find();
     return res
       .status(200)
       .json(new ApiResponse(200, response, "Plan successfully fetched"));
